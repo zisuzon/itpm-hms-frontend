@@ -16,7 +16,7 @@ import { Routes } from "../routes";
 export default [
     {
         "id": 1,
-        "name": "Overview",
+        "name": "Dashboard",
         "image": OverviewImg,
         "link": Routes.DashboardOverview.path
     },

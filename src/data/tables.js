@@ -10,6 +10,75 @@ import JapanFlag from '../assets/img/flags/japan.svg';
 import ItalyFlag from '../assets/img/flags/italy.svg';
 
 
+const teamMembers = [
+  {
+    id: 1,
+    name: 'Najmul Hossain',
+    shortDescription: 'This is a short description',
+    description: 'This is a long description',
+    sortId: 1,
+    email: "info@example.com",
+    address: "Somewhere in Bangladesh",
+    phone: "01681444444",
+    designation: "Managing Director",
+  },
+  {
+    id: 2,
+    name: 'A. F. M. Azizur Rahman',
+    shortDescription: 'This is a short description',
+    description: 'This is a long description',
+    sortId: 2,
+    email: "info@example.com",
+    address: "Somewhere in Bangladesh",
+    phone: "01681444444",
+    designation: "Director",
+  },
+  {
+    id: 3,
+    name: 'A. F. M. Azizur Rahman',
+    shortDescription: 'This is a short description',
+    description: 'This is a long description',
+    sortId: 3,
+    email: "info@example.com",
+    address: "Somewhere in Bangladesh",
+    phone: "01681444444",
+    designation: "Director",
+  },
+  {
+    id: 4,
+    name: 'Badrul Hossain',
+    shortDescription: 'This is a short description',
+    description: 'This is a long description',
+    sortId: 4,
+    email: "info@example.com",
+    address: "Somewhere in Bangladesh",
+    phone: "01681444444",
+    designation: "Director",
+  },
+  {
+    id: 5,
+    name: 'Zakir M. Hossain',
+    shortDescription: 'This is a short description',
+    description: 'This is a long description',
+    sortId: 5,
+    email: "info@example.com",
+    address: "Somewhere in Bangladesh",
+    phone: "01681444444",
+    designation: "Economist",
+  },
+  {
+    id: 6,
+    name: 'K. M. Shamsuzzaman Asif',
+    shortDescription: 'This is a short description',
+    description: 'This is a long description',
+    sortId: 6,
+    email: "info@example.com",
+    address: "Somewhere in Bangladesh",
+    phone: "01681444444",
+    designation: "Administrative Officer and Field Coordinator",
+  },
+];
+
 const pageVisits = [
     { id: 1, views: 4.525, returnValue: 255, bounceRate: 42.55, pageName: "/demo/admin/index.html" },
     { id: 2, views: 2.987, returnValue: 139, bounceRate: -43.52, pageName: "/demo/admin/forms.html" },
@@ -47,4 +116,5 @@ export {
     pageTraffic,
     pageRanking,
     invoiceItems,
+    teamMembers,
 };

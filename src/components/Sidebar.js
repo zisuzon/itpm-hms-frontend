@@ -4,7 +4,7 @@ import SimpleBar from 'simplebar-react';
 import { useLocation } from "react-router-dom";
 import { CSSTransition } from 'react-transition-group';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faBook, faBoxOpen, faChartPie, faCog, faFileAlt, faHandHoldingUsd, faSignOutAlt, faTable, faTimes, faCalendarAlt, faMapPin, faInbox, faRocket } from "@fortawesome/free-solid-svg-icons";
+import { faBook, faBoxOpen, faChartPie, faUserNinja, faUserPlus, faCog, faFileAlt, faHandHoldingUsd, faSignOutAlt, faTable, faTimes, faCalendarAlt, faMapPin, faInbox, faRocket } from "@fortawesome/free-solid-svg-icons";
 import { Nav, Badge, Image, Button, Dropdown, Accordion, Navbar } from '@themesberg/react-bootstrap';
 import { Link } from 'react-router-dom';
 
@@ -99,17 +99,19 @@ export default (props = {}) => {
             <Nav className="flex-column pt-3 pt-md-0">
               <NavItem title="Volt React" link={Routes.Presentation.path} image={ReactHero} />
 
-              <NavItem title="Overview" link={Routes.DashboardOverview.path} icon={faChartPie} />
-              <NavItem external title="Messages" link="https://demo.themesberg.com/volt-pro-react/#/messages" target="_blank" badgeText="Pro" icon={faInbox} />
-              <NavItem title="Transactions" icon={faHandHoldingUsd} link={Routes.Transactions.path} />
+              <NavItem title="Dashboard" link={Routes.DashboardOverview.path} icon={faChartPie} />
+              <CollapsableNavItem eventKey="team-members/" title="Team Members" icon={faUserNinja}>
+                <NavItem title="All Team Members" link={Routes.AllTeamMembers.path} />
+                <NavItem title="Add New" icon={faUserPlus} link={Routes.CreateTeamMember.path} />
+              </CollapsableNavItem>
+
               <NavItem title="Settings" icon={faCog} link={Routes.Settings.path} />
-              <NavItem external title="Calendar" link="https://demo.themesberg.com/volt-pro-react/#/calendar" target="_blank" badgeText="Pro" icon={faCalendarAlt} />
-              <NavItem external title="Map" link="https://demo.themesberg.com/volt-pro-react/#/map" target="_blank" badgeText="Pro" icon={faMapPin} />
 
               <CollapsableNavItem eventKey="tables/" title="Tables" icon={faTable}>
                 <NavItem title="Bootstrap Table" link={Routes.BootstrapTables.path} />
               </CollapsableNavItem>
 
+              {/* PAGES */}
               <CollapsableNavItem eventKey="examples/" title="Page Examples" icon={faFileAlt}>
                 <NavItem title="Sign In" link={Routes.Signin.path} />
                 <NavItem title="Sign Up" link={Routes.Signup.path} />
@@ -120,10 +122,9 @@ export default (props = {}) => {
                 <NavItem title="500 Server Error" link={Routes.ServerError.path} />
               </CollapsableNavItem>
 
-              <NavItem external title="Plugins" link="https://demo.themesberg.com/volt-pro-react/#/plugins/datatable" target="_blank" badgeText="Pro" icon={faChartPie} />
-
               <Dropdown.Divider className="my-3 border-indigo" />
 
+              {/* DOCUMENTATIONS */}
               <CollapsableNavItem eventKey="documentation/" title="Getting Started" icon={faBook}>
                 <NavItem title="Overview" link={Routes.DocsOverview.path} />
                 <NavItem title="Download" link={Routes.DocsDownload.path} />
@@ -133,6 +134,8 @@ export default (props = {}) => {
                 <NavItem title="Build Tools" link={Routes.DocsBuild.path} />
                 <NavItem title="Changelog" link={Routes.DocsChangelog.path} />
               </CollapsableNavItem>
+
+              {/* COMPONENTS */}
               <CollapsableNavItem eventKey="components/" title="Components" icon={faBoxOpen}>
                 <NavItem title="Accordion" link={Routes.Accordions.path} />
                 <NavItem title="Alerts" link={Routes.Alerts.path} />

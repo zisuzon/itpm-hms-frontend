@@ -1,16 +1,16 @@
 
 export const Routes = {
     // pages
-    Presentation: { path: "/" },
-    DashboardOverview: { path: "/dashboard/overview" },
+    Presentation: { path: "/presentation" },
+    DashboardOverview: { path: "/" },
     Transactions: { path: "/transactions" },
     Settings: { path: "/settings" },
+    AllTeamMembers: { path: "/team-members/all-team-members" },
+    CreateTeamMember: { path: "/team-members/create" },
     Upgrade: { path: "/upgrade" },
     BootstrapTables: { path: "/tables/bootstrap-tables" },
-    Billing: { path: "/examples/billing" },
-    Invoice: { path: "/examples/invoice" },
-    Signin: { path: "/examples/sign-in" },
-    Signup: { path: "/examples/sign-up" },
+    Signin: { path: "/sign-in" },
+    Signup: { path: "/sign-up" },
     ForgotPassword: { path: "/examples/forgot-password" },
     ResetPassword: { path: "/examples/reset-password" },
     Lock: { path: "/examples/lock" },

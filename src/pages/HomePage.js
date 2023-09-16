@@ -8,6 +8,8 @@ import Upgrade from "./Upgrade";
 import DashboardOverview from "./dashboard/DashboardOverview";
 import Transactions from "./Transactions";
 import Settings from "./Settings";
+import CreateTeamMember from "./team-members/CreateTeamMember";
+import AllTeamMembers from "./team-members/AllTeamMembers";
 import BootstrapTables from "./tables/BootstrapTables";
 import Signin from "./examples/Signin";
 import Signup from "./examples/Signup";
@@ -90,7 +92,6 @@ const RouteWithSidebar = ({ component: Component, ...rest }) => {
         <main className="content">
           <Navbar />
           <Component {...props} />
-          <Footer toggleSettings={toggleSettings} showSettings={showSettings} />
         </main>
       </>
     )}
@@ -114,6 +115,8 @@ export default () => (
     <RouteWithSidebar exact path={Routes.Upgrade.path} component={Upgrade} />
     <RouteWithSidebar exact path={Routes.Transactions.path} component={Transactions} />
     <RouteWithSidebar exact path={Routes.Settings.path} component={Settings} />
+    <RouteWithSidebar exact path={Routes.AllTeamMembers.path} component={AllTeamMembers} />
+    <RouteWithSidebar exact path={Routes.CreateTeamMember.path} component={CreateTeamMember} />
     <RouteWithSidebar exact path={Routes.BootstrapTables.path} component={BootstrapTables} />
 
     {/* components */}
