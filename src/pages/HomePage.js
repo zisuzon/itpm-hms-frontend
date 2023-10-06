@@ -81,23 +81,25 @@ const RouteWithSidebar = ({ component: Component, ...rest }) => {
 
   const [showSettings, setShowSettings] = useState(localStorageIsSettingsVisible);
 
-  const toggleSettings = () => {
-    setShowSettings(!showSettings);
-    localStorage.setItem('settingsVisible', !showSettings);
-  }
+  const authToken = JSON.parse(localStorage.getItem('userData'))?.token;
 
   return (
-    <Route {...rest} render={props => (
-      <>
-        <Preloader show={loaded ? false : true} />
-        <Sidebar />
-
-        <main className="content">
-          <Navbar />
-          <Component {...props} />
-        </main>
-      </>
-    )}
+    <Route
+      {...rest}
+      render={(props) => (
+        authToken ? (
+          <>
+            <Preloader show={loaded ? false : true} />
+            <Sidebar />
+            <main className="content">
+              <Navbar />
+              <Component {...props} />
+            </main>
+          </>
+        ) : (
+          <Redirect to="/login" />
+        )
+      )}
     />
   );
 };

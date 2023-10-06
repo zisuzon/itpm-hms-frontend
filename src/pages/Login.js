@@ -1,17 +1,17 @@
 
 import React, { useState } from "react";
+import { Link, useHistory } from 'react-router-dom';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faAngleLeft, faEnvelope, faUnlockAlt } from "@fortawesome/free-solid-svg-icons";
 import { faFacebookF, faGithub, faTwitter } from "@fortawesome/free-brands-svg-icons";
 import { Col, Row, Form, Card, Button, FormCheck, Container, InputGroup } from '@themesberg/react-bootstrap';
-import { Link } from 'react-router-dom';
 import axiosInstance from '../axios'
 
 import { Routes } from "../routes";
 import BgImage from "../assets/img/illustrations/signin.svg";
 
-
 export default () => {
+  const history = useHistory();
   const [validated, setValidated] = useState(false);
 
   const [formData, setFormData] = useState({
@@ -42,8 +42,11 @@ export default () => {
       axiosInstance
       .post("api/users/login", formData)
       .then((response) => {
-        console.log('data I got', response)
-        
+        const loginDataJSON = JSON.stringify(response.data);
+
+        localStorage.setItem('userData', loginDataJSON);
+
+        history.push('/')
       })
       .catch((err) => {
         console.log('Error!')
@@ -109,17 +112,17 @@ export default () => {
                       </InputGroup>
                     </Form.Group>
                     <div className="d-flex justify-content-between align-items-center mb-4">
-                      <Form.Check type="checkbox">
+                      {/* <Form.Check type="checkbox">
                         <FormCheck.Input id="defaultCheck5" className="me-2" />
                         <FormCheck.Label htmlFor="defaultCheck5" className="mb-0">Remember me</FormCheck.Label>
-                      </Form.Check>
-                      <Card.Link className="small text-end">Lost password?</Card.Link>
+                      </Form.Check> */}
+                      {/* <Card.Link className="small text-end">Lost password?</Card.Link> */}
                     </div>
                   </Form.Group>
 
                   {/* Action Button */}
                   <Button variant="primary" type="submit" className="w-100">
-                    Sign in
+                    Log in
                   </Button>
                 </Form>
               </div>
