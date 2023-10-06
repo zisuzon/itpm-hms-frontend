@@ -6,6 +6,8 @@ const axiosInstance = axios.create({
   timeout: 20000, // Timeout in milliseconds
   headers: {
     'Content-Type': 'application/json', // You can add default headers here
+    'Access-Control-Allow-Origin': '*',
+    
   },
 });
 

@@ -10,8 +10,11 @@ import Transactions from "./Transactions";
 import Settings from "./Settings";
 import CreateTeamMember from "./team-members/CreateTeamMember";
 import AllTeamMembers from "./team-members/AllTeamMembers";
+import CreateSectoralAndResearch from "./capability/CreateSectoralAndResearch";
+import AllSectoralAndResearch from "./capability/AllSectoralAndResearch";
 import BootstrapTables from "./tables/BootstrapTables";
 import Signin from "./examples/Signin";
+import Login from "./Login";
 import Signup from "./examples/Signup";
 import ForgotPassword from "./examples/ForgotPassword";
 import ResetPassword from "./examples/ResetPassword";
@@ -103,6 +106,7 @@ export default () => (
   <Switch>
     <RouteWithLoader exact path={Routes.Presentation.path} component={Presentation} />
     <RouteWithLoader exact path={Routes.Signin.path} component={Signin} />
+    <RouteWithLoader exact path={Routes.Login.path} component={Login} />
     <RouteWithLoader exact path={Routes.Signup.path} component={Signup} />
     <RouteWithLoader exact path={Routes.ForgotPassword.path} component={ForgotPassword} />
     <RouteWithLoader exact path={Routes.ResetPassword.path} component={ResetPassword} />
@@ -117,6 +121,8 @@ export default () => (
     <RouteWithSidebar exact path={Routes.Settings.path} component={Settings} />
     <RouteWithSidebar exact path={Routes.AllTeamMembers.path} component={AllTeamMembers} />
     <RouteWithSidebar exact path={Routes.CreateTeamMember.path} component={CreateTeamMember} />
+    <RouteWithSidebar exact path={Routes.AllSectoralAndResearch.path} component={AllSectoralAndResearch} />
+    <RouteWithSidebar exact path={Routes.CreateSectoralAndResearch.path} component={CreateSectoralAndResearch} />
     <RouteWithSidebar exact path={Routes.BootstrapTables.path} component={BootstrapTables} />
 
     {/* components */}

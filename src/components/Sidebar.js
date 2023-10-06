@@ -100,9 +100,17 @@ export default (props = {}) => {
               <NavItem title="Volt React" link={Routes.Presentation.path} image={ReactHero} />
 
               <NavItem title="Dashboard" link={Routes.DashboardOverview.path} icon={faChartPie} />
+              
+              {/* Team Members */}
               <CollapsableNavItem eventKey="team-members/" title="Team Members" icon={faUserNinja}>
                 <NavItem title="All Team Members" link={Routes.AllTeamMembers.path} />
                 <NavItem title="Add New" icon={faUserPlus} link={Routes.CreateTeamMember.path} />
+              </CollapsableNavItem>
+
+              {/* Capability/Sectoral and Research */}
+              <CollapsableNavItem eventKey="team-members/" title="S. and Research" icon={faUserNinja}>
+                <NavItem title="All S&R" link={Routes.AllSectoralAndResearch.path} />
+                <NavItem title="Add New" icon={faUserPlus} link={Routes.CreateSectoralAndResearch.path} />
               </CollapsableNavItem>
 
               <NavItem title="Settings" icon={faCog} link={Routes.Settings.path} />
@@ -155,8 +163,6 @@ export default (props = {}) => {
                 <NavItem title="Toasts" link={Routes.Toasts.path} />
                 <NavItem title="Tooltips" link={Routes.Tooltips.path} />
               </CollapsableNavItem>
-              <NavItem external title="Themesberg" link="https://themesberg.com" target="_blank" image={ThemesbergLogo} />
-              <Button as={Link} to={Routes.Upgrade.path} variant="secondary" className="upgrade-to-pro"><FontAwesomeIcon icon={faRocket} className="me-1" /> Upgrade to Pro</Button>
             </Nav>
           </div>
         </SimpleBar>
