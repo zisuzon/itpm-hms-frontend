@@ -7,6 +7,7 @@ export const Routes = {
     Settings: { path: "/settings" },
     AllTeamMembers: { path: "/team-members/all-team-members" },
     CreateTeamMember: { path: "/team-members/create" },
+    EditTeamMember: { path: "/team-members/edit/:id" },
     AllSectoralAndResearch: { path: "/capability/all-sectoral-research" },
     CreateSectoralAndResearch: { path: "/capability/create" },
     Upgrade: { path: "/upgrade" },

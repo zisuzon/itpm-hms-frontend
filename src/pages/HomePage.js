@@ -9,6 +9,7 @@ import DashboardOverview from "./dashboard/DashboardOverview";
 import Transactions from "./Transactions";
 import Settings from "./Settings";
 import CreateTeamMember from "./team-members/CreateTeamMember";
+import EditTeamMember from "./team-members/EditTeamMember";
 import AllTeamMembers from "./team-members/AllTeamMembers";
 import CreateSectoralAndResearch from "./capability/CreateSectoralAndResearch";
 import AllSectoralAndResearch from "./capability/AllSectoralAndResearch";
@@ -123,6 +124,7 @@ export default () => (
     <RouteWithSidebar exact path={Routes.Settings.path} component={Settings} />
     <RouteWithSidebar exact path={Routes.AllTeamMembers.path} component={AllTeamMembers} />
     <RouteWithSidebar exact path={Routes.CreateTeamMember.path} component={CreateTeamMember} />
+    <RouteWithSidebar exact path={Routes.EditTeamMember.path} component={EditTeamMember} />
     <RouteWithSidebar exact path={Routes.AllSectoralAndResearch.path} component={AllSectoralAndResearch} />
     <RouteWithSidebar exact path={Routes.CreateSectoralAndResearch.path} component={CreateSectoralAndResearch} />
     <RouteWithSidebar exact path={Routes.BootstrapTables.path} component={BootstrapTables} />
