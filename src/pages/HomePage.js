@@ -8,6 +8,9 @@ import Upgrade from "./Upgrade";
 import DashboardOverview from "./dashboard/DashboardOverview";
 import Transactions from "./Transactions";
 import Settings from "./Settings";
+import AllPartners from "./partners/AllPartners";
+import CreatePartner from "./partners/CreatePartner";
+import EditPartner from "./partners/EditPartner";
 import CreateTeamMember from "./team-members/CreateTeamMember";
 import EditTeamMember from "./team-members/EditTeamMember";
 import AllTeamMembers from "./team-members/AllTeamMembers";
@@ -121,13 +124,16 @@ export default () => (
     <RouteWithSidebar exact path={Routes.DashboardOverview.path} component={DashboardOverview} />
     <RouteWithSidebar exact path={Routes.Upgrade.path} component={Upgrade} />
     <RouteWithSidebar exact path={Routes.Transactions.path} component={Transactions} />
+    <RouteWithSidebar exact path={Routes.BootstrapTables.path} component={BootstrapTables} />
     <RouteWithSidebar exact path={Routes.Settings.path} component={Settings} />
     <RouteWithSidebar exact path={Routes.AllTeamMembers.path} component={AllTeamMembers} />
+    <RouteWithSidebar exact path={Routes.CreatePartner.path} component={CreatePartner} />
+    <RouteWithSidebar exact path={Routes.EditPartner.path} component={EditPartner} />
+    <RouteWithSidebar exact path={Routes.AllPartners.path} component={AllPartners} />
     <RouteWithSidebar exact path={Routes.CreateTeamMember.path} component={CreateTeamMember} />
     <RouteWithSidebar exact path={Routes.EditTeamMember.path} component={EditTeamMember} />
     <RouteWithSidebar exact path={Routes.AllSectoralAndResearch.path} component={AllSectoralAndResearch} />
     <RouteWithSidebar exact path={Routes.CreateSectoralAndResearch.path} component={CreateSectoralAndResearch} />
-    <RouteWithSidebar exact path={Routes.BootstrapTables.path} component={BootstrapTables} />
 
     {/* components */}
     <RouteWithSidebar exact path={Routes.Accordions.path} component={Accordion} />

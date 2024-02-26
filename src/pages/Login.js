@@ -1,18 +1,18 @@
 
-import React, { useState } from "react";
-import { Link, useHistory } from 'react-router-dom';
+import React, { useState, useContext } from "react";
+import { useHistory } from 'react-router-dom';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faAngleLeft, faEnvelope, faUnlockAlt } from "@fortawesome/free-solid-svg-icons";
-import { faFacebookF, faGithub, faTwitter } from "@fortawesome/free-brands-svg-icons";
+import { faEnvelope, faUnlockAlt } from "@fortawesome/free-solid-svg-icons";
 import { Col, Row, Form, Card, Button, FormCheck, Container, InputGroup } from '@themesberg/react-bootstrap';
 import axiosInstance from '../axios'
-
+// import { AuthContext } from '../shared/context/auth-context';
 import { Routes } from "../routes";
 import BgImage from "../assets/img/illustrations/signin.svg";
 
 export default () => {
   const history = useHistory();
   const [validated, setValidated] = useState(false);
+  // const auth = useContexts(AuthContext);
 
   const [formData, setFormData] = useState({
     email: '',
@@ -27,7 +27,7 @@ export default () => {
     });
   };
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
     event.stopPropagation();
     const form = event.currentTarget;
@@ -39,7 +39,7 @@ export default () => {
     setValidated(true);
 
     try {
-      axiosInstance
+      const responseData = await axiosInstance
       .post("api/users/login", formData)
       .then((response) => {
         const loginDataJSON = JSON.stringify(response.data);
@@ -47,9 +47,11 @@ export default () => {
         localStorage.setItem('userData', loginDataJSON);
 
         history.push('/')
+        // auth.login(responseData.userId, responseData.token);
+        // console.log('auth', auth)
       })
       .catch((err) => {
-        console.log('Error!')
+        console.log('Login API error!')
       })
       
     } catch (error) {
