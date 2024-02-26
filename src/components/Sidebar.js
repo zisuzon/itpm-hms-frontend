@@ -105,20 +105,27 @@ export default (props = {}) => {
                 <NavItem title="Add New" icon={faUserPlus} link={Routes.CreateTeamMember.path} />
               </CollapsableNavItem>
 
+              {/* Partners */}
+              <CollapsableNavItem eventKey="team-members/" title="Partners" icon={faUserNinja}>
+                <NavItem title="All Partners" link={Routes.AllPartners.path} />
+                <NavItem title="Add New" icon={faUserPlus} link={Routes.CreatePartner.path} />
+              </CollapsableNavItem>
+
               {/* Capability/Sectoral and Research */}
               <CollapsableNavItem eventKey="team-members/" title="S. and Research" icon={faUserNinja}>
                 <NavItem title="All S&R" link={Routes.AllSectoralAndResearch.path} />
                 <NavItem title="Add New" icon={faUserPlus} link={Routes.CreateSectoralAndResearch.path} />
               </CollapsableNavItem>
 
-              <NavItem title="Settings" icon={faCog} link={Routes.Settings.path} />
+              {/* <NavItem title="Settings" icon={faCog} link={Routes.Settings.path} /> */}
 
-              <CollapsableNavItem eventKey="tables/" title="Tables" icon={faTable}>
+              {/* TABLES */}
+              {/* <CollapsableNavItem eventKey="tables/" title="Tables" icon={faTable}>
                 <NavItem title="Bootstrap Table" link={Routes.BootstrapTables.path} />
-              </CollapsableNavItem>
+              </CollapsableNavItem> */}
 
               {/* PAGES */}
-              <CollapsableNavItem eventKey="examples/" title="Page Examples" icon={faFileAlt}>
+              {/* <CollapsableNavItem eventKey="examples/" title="Page Examples" icon={faFileAlt}>
                 <NavItem title="Sign In" link={Routes.Signin.path} />
                 <NavItem title="Sign Up" link={Routes.Signup.path} />
                 <NavItem title="Forgot password" link={Routes.ForgotPassword.path} />
@@ -126,12 +133,12 @@ export default (props = {}) => {
                 <NavItem title="Lock" link={Routes.Lock.path} />
                 <NavItem title="404 Not Found" link={Routes.NotFound.path} />
                 <NavItem title="500 Server Error" link={Routes.ServerError.path} />
-              </CollapsableNavItem>
+              </CollapsableNavItem> */}
 
               <Dropdown.Divider className="my-3 border-indigo" />
 
               {/* DOCUMENTATIONS */}
-              <CollapsableNavItem eventKey="documentation/" title="Getting Started" icon={faBook}>
+              {/* <CollapsableNavItem eventKey="documentation/" title="Getting Started" icon={faBook}>
                 <NavItem title="Overview" link={Routes.DocsOverview.path} />
                 <NavItem title="Download" link={Routes.DocsDownload.path} />
                 <NavItem title="Quick Start" link={Routes.DocsQuickStart.path} />
@@ -139,7 +146,7 @@ export default (props = {}) => {
                 <NavItem title="Folder Structure" link={Routes.DocsFolderStructure.path} />
                 <NavItem title="Build Tools" link={Routes.DocsBuild.path} />
                 <NavItem title="Changelog" link={Routes.DocsChangelog.path} />
-              </CollapsableNavItem>
+              </CollapsableNavItem> */}
 
               {/* COMPONENTS */}
               <CollapsableNavItem eventKey="components/" title="Components" icon={faBoxOpen}>
