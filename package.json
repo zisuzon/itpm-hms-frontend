@@ -30,6 +30,7 @@
     "bootstrap": "5.0.0-beta1",
     "chartist": "^0.11.4",
     "chartist-plugin-tooltips-updated": "^0.1.4",
+    "dompurify": "^3.0.8",
     "moment-timezone": "^0.5.43",
     "react": "^16.13.1",
     "react-chartist": "^0.14.4",
@@ -42,6 +43,7 @@
     "react-router-hash-link": "^2.3.1",
     "react-scripts": "3.4.3",
     "react-transition-group": "^4.4.5",
+    "sanitize-html": "^2.11.0",
     "sass": "^1.67.0",
     "simplebar-react": "^2.4.3"
   },
