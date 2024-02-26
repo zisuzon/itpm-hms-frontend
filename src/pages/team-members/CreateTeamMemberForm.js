@@ -282,6 +282,7 @@ export const CreateTeamMemberForm = () => {
                 <Form.Label>Description</Form.Label>
                 <div className={!isDescriptionValid && 'invalid-editor'}>
                   <Editor
+                  value={formData.description}
                     apiKey='q6tut9ishckw8kfsto8fek4zkak8ttiiu06x5wgev1rl0uzl'
                     onInit={(evt, editor) => editorRef.current = editor}
                     init={{
