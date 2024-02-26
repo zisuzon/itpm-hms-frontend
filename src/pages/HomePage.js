@@ -15,6 +15,7 @@ import CreateTeamMember from "./team-members/CreateTeamMember";
 import EditTeamMember from "./team-members/EditTeamMember";
 import AllTeamMembers from "./team-members/AllTeamMembers";
 import CreateSectoralAndResearch from "./capability/CreateSectoralAndResearch";
+import EditSectoralAndResearch from "./capability/EditCapability";
 import AllSectoralAndResearch from "./capability/AllSectoralAndResearch";
 import BootstrapTables from "./tables/BootstrapTables";
 import Signin from "./examples/Signin";
@@ -134,6 +135,7 @@ export default () => (
     <RouteWithSidebar exact path={Routes.EditTeamMember.path} component={EditTeamMember} />
     <RouteWithSidebar exact path={Routes.AllSectoralAndResearch.path} component={AllSectoralAndResearch} />
     <RouteWithSidebar exact path={Routes.CreateSectoralAndResearch.path} component={CreateSectoralAndResearch} />
+    <RouteWithSidebar exact path={Routes.EditSectoralAndResearch.path} component={EditSectoralAndResearch} />
 
     {/* components */}
     <RouteWithSidebar exact path={Routes.Accordions.path} component={Accordion} />

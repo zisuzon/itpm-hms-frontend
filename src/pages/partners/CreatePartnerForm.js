@@ -15,6 +15,8 @@ export const CreatePartnerForm = () => {
     name: '',
     sortId: '',
     partnerType: '',
+    partnerImage: '',
+    partnerUrl: '',
   });
 
   function getPartnerById(memberId) {
@@ -143,6 +145,37 @@ export const CreatePartnerForm = () => {
                   placeholder="Partner position in list"
                   name="sortId"
                   value={formData.sortId}
+                  onChange={handleChange}
+                />
+              </Form.Group>
+            </Col>
+          </Row>
+
+          <Row>
+            {/* Partner Image */}
+            <Col md={6} className="mb-3">
+              <Form.Group id="partnerImage">
+                <Form.Label>Partner Image</Form.Label>
+                <Form.Control
+                  required
+                  type="text"
+                  name="partnerImage"
+                  placeholder="https://url-of-the-profile-image.com" 
+                  value={formData.partnerImage}
+                  onChange={handleChange}
+                />
+              </Form.Group>
+            </Col>
+            {/* Partner URL */}
+            <Col md={6} className="mb-3">
+              <Form.Group id="partnerUrl">
+                <Form.Label>Partner Url</Form.Label>
+                <Form.Control
+                  required
+                  type="text"
+                  placeholder="Partner url"
+                  name="partnerUrl"
+                  value={formData.partnerUrl}
                   onChange={handleChange}
                 />
               </Form.Group>

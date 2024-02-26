@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { Link } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faAngleDown } from '@fortawesome/free-solid-svg-icons';
 import { Card, Table, Dropdown, ButtonGroup, Alert } from '@themesberg/react-bootstrap';
@@ -92,7 +93,8 @@ export const SectoralResarchTable = () => {
             </Dropdown.Toggle>
 
             <Dropdown.Menu className="user-dropdown dropdown-menu-left">
-              <Dropdown.Item href="#action">Edit</Dropdown.Item>
+              {/* <Dropdown.Item href="#action">Edit</Dropdown.Item> */}
+              <Dropdown.Item as={Link} to={`/capability/edit/${_id}`}>Edit</Dropdown.Item>
               <Dropdown.Item as="button" onClick={() => handleShowModal({id: _id})} className="text-danger">Delete</Dropdown.Item>
             </Dropdown.Menu>
           </Dropdown>

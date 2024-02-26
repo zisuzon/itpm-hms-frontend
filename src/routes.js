@@ -13,6 +13,7 @@ export const Routes = {
     EditPartner: { path: "/partners/edit/:id" },
     AllSectoralAndResearch: { path: "/capability/all-sectoral-research" },
     CreateSectoralAndResearch: { path: "/capability/create" },
+    EditSectoralAndResearch: { path: "/capability/edit/:id" },
     Upgrade: { path: "/upgrade" },
     BootstrapTables: { path: "/tables/bootstrap-tables" },
     Signin: { path: "/sign-in" },

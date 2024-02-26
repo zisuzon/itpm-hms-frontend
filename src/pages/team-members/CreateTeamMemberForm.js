@@ -1,6 +1,7 @@
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useHistory, useParams } from 'react-router-dom';
+import { Editor } from '@tinymce/tinymce-react';
 import { Col, Row, Card, Form, Button, Alert } from '@themesberg/react-bootstrap';
 import axiosInstance from '../../axios'
 
@@ -8,7 +9,9 @@ export const CreateTeamMemberForm = () => {
   const { id } = useParams();
   const history = useHistory();
 
+  const editorRef = useRef(null);
   const [validated, setValidated] = useState(false);
+  const [isDescriptionValid, setIsDescriptionValid] = useState(true);
   const [formError, setFormError] = useState('');
   const [formSuccess, setFormSuccess] = useState('');
   const [formData, setFormData] = useState({
@@ -17,6 +20,7 @@ export const CreateTeamMemberForm = () => {
     description: '',
     sortId: '',
     image: '',
+    listImage: '',
     address: '',
     email: '',
     phone: '',
@@ -83,8 +87,16 @@ export const CreateTeamMemberForm = () => {
       [name]: value,
     });
   };
+
+  const handleEditorChange = (content, editor, name) => {
+    setFormData({
+      ...formData,
+      [name]: content,
+    });
+  };
   
   const handleSubmit = (event) => {
+    setIsDescriptionValid(true)
     event.preventDefault();
     event.stopPropagation();
     const form = event.currentTarget;
@@ -95,6 +107,9 @@ export const CreateTeamMemberForm = () => {
     }
 
     setValidated(true);
+    if(!formData.description) {
+      setIsDescriptionValid(false)
+    }
 
     if(id) {
       updateMember(id)
@@ -186,6 +201,21 @@ export const CreateTeamMemberForm = () => {
           </Row>
 
           <Row>
+            {/* List Image URL */}
+            <Col md={6} className="mb-3">
+              <Form.Group id="listImageUrl">
+                <Form.Label>List Image URL</Form.Label>
+                <Form.Control
+                  required
+                  type="text"
+                  placeholder="https://url-of-the-profile-image.com" 
+                  name="listImage"
+                  value={formData.listImage}
+                  onChange={handleChange}
+                />
+              </Form.Group>
+            </Col>
+
             {/* Email */}
             <Col md={6} className="mb-3">
               <Form.Group id="emal">
@@ -198,6 +228,9 @@ export const CreateTeamMemberForm = () => {
                 />
               </Form.Group>
             </Col>
+          </Row>
+
+          <Row className="align-items-center">
             {/* Phone */}
             <Col md={6} className="mb-3">
               <Form.Group id="phone">
@@ -247,14 +280,27 @@ export const CreateTeamMemberForm = () => {
             <Col sm={9} className="mb-3">
               <Form.Group id="description">
                 <Form.Label>Description</Form.Label>
-                <Form.Control
-                  required
-                  as="textarea"
-                  rows="3"
-                  name="description"
-                  value={formData.description}
-                  onChange={handleChange}
-                />
+                <div className={!isDescriptionValid && 'invalid-editor'}>
+                  <Editor
+                    apiKey='q6tut9ishckw8kfsto8fek4zkak8ttiiu06x5wgev1rl0uzl'
+                    onInit={(evt, editor) => editorRef.current = editor}
+                    init={{
+                      height: 300,
+                      menubar: false,
+                      plugins: [
+                        'advlist autolink lists link image charmap print preview anchor',
+                        'searchreplace visualblocks code fullscreen',
+                        'insertdatetime media table paste code help wordcount'
+                      ],
+                      toolbar: 'undo redo | formatselect | ' +
+                      'bold italic backcolor | alignleft aligncenter ' +
+                      'alignright alignjustify | bullist numlist outdent indent | ' +
+                      'removeformat | help',
+                      content_style: 'body { font-family:Helvetica,Arial,sans-serif; font-size:14px }'
+                    }}
+                    onEditorChange={(content, editor) => handleEditorChange(content, editor, 'description')}
+                  />
+                </div>
               </Form.Group>
             </Col>
           </Row>

@@ -29,6 +29,19 @@ export const CreateSectoralResearchForm = () => {
     researchMethology: '',
   });
 
+  function getCapabilityById(memberId) {
+    axiosInstance
+    .get(`api/sectoral-and-research/${memberId}`)
+    .then((response) => {
+      console.log('response', response)
+      setFormData({...response.data.sectoralResearch})
+      console.log('formData', formData)
+    })
+    .catch((err) => {
+      console.log('Error!')
+    })
+  }
+
   function createSectoralResearch() {
     try {
       axiosInstance
@@ -49,9 +62,9 @@ export const CreateSectoralResearchForm = () => {
   function updateSectoralResearch(memberId) {
     try {
       axiosInstance
-      .patch(`api/team-members/${memberId}`, formData)
+      .patch(`api/sectoral-and-research/${memberId}`, formData)
       .then((response) => {
-        setFormSuccess('Member has been updated!')
+        setFormSuccess('Sectoral and Research has been updated!')
       })
       .catch((err) => {
         console.log('Error!')
@@ -88,6 +101,13 @@ export const CreateSectoralResearchForm = () => {
       [name]: content,
     });
   };
+
+  useEffect(() => {
+    if(id) {
+      getCapabilityById(id)
+    }
+  }, []);
+
 
   return (
     <Card border="light" className="bg-white shadow-sm mb-4">
@@ -135,6 +155,7 @@ export const CreateSectoralResearchForm = () => {
                 <Form.Label>Study Title</Form.Label>
                 <div className={!isTitleEditorValid && 'invalid-editor'}>
                   <Editor
+                    value={formData.studyTitle}
                     apiKey='q6tut9ishckw8kfsto8fek4zkak8ttiiu06x5wgev1rl0uzl'
                     onInit={(evt, editor) => editorRef.current = editor}
                     init={{
@@ -165,6 +186,7 @@ export const CreateSectoralResearchForm = () => {
                 <Form.Label>Study Objective</Form.Label>
                 <div className={!isObjectiveEditorValid && 'invalid-editor'}>
                   <Editor
+                    value={formData.studyObjective}
                     apiKey='q6tut9ishckw8kfsto8fek4zkak8ttiiu06x5wgev1rl0uzl'
                     onInit={(evt, editor) => editorRef.current = editor}
                     init={{
@@ -195,6 +217,7 @@ export const CreateSectoralResearchForm = () => {
                 <Form.Label>Research Methodology</Form.Label>
                 <div className={!isResearchMethologyValid && 'invalid-editor'}>
                   <Editor
+                    value={formData.researchMethology}
                     apiKey='q6tut9ishckw8kfsto8fek4zkak8ttiiu06x5wgev1rl0uzl'
                     onInit={(evt, editor) => editorRef.current = editor}
                     init={{
