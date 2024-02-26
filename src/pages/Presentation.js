@@ -105,7 +105,7 @@ export default () => {
           <Row>
             <Col xs={12} className="text-center">
               <div className="react-big-icon d-none d-lg-block"><span className="fab fa-react"></span></div>
-              <h1 className="fw-bolder text-secondary">Volt React Dashboard</h1>
+              <h1 className="fw-bolder text-secondary">DI Dashboard</h1>
               <p className="text-muted fw-light mb-5 h5">Open source powered by React.js and Bootstrap 5</p>
               <div className="d-flex align-items-center justify-content-center">
                 <Button variant="secondary" as={Link} to={Routes.DashboardOverview.path} className="text-dark me-3">

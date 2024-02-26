@@ -8,24 +8,24 @@ import ConfirmationModal from '../components/ConfirmModal'
 import axiosInstance from '../../axios'
 
 
-export const TeamMembersTable = () => {
+export const PartnersTable = () => {
   const [showModal, setShowModal] = useState(false);
-  const [teamMembers, setTeamMembers] = useState([]);
-  const [tempDeleteMember, setTempDeleteMember] = useState({});
+  const [partners, setPartners] = useState([]);
+  const [tempDeletePartner, setTempDeletePartner] = useState({});
   const [deleteSuccessMsg, setDeleteSuccessMsg] = useState('');
-  const confirmModalText = `Are you sure you want to delete the member ${tempDeleteMember?.name}?`
+  const confirmModalText = `Are you sure you want to delete ${tempDeletePartner?.name}?`
 
   const handleCloseModal = () => setShowModal(false);
-  const handleShowModal = (tempDeleteMember) => {
-    setTempDeleteMember(tempDeleteMember)
+  const handleShowModal = (tempDeletePartner) => {
+    setTempDeletePartner(tempDeletePartner)
     setShowModal(true);
   }
 
-  function getAllTeamMember() {
+  function getAllPartners() {
     axiosInstance
-    .get("api/team-members")
+    .get("api/partners")
     .then((response) => {
-      setTeamMembers(response.data.teamMembers.sort((a, b) => a.sortId - b.sortId))
+      setPartners(response.data.partners)
     })
     .catch((err) => {
       console.log('Error!')
@@ -33,16 +33,16 @@ export const TeamMembersTable = () => {
   }
 
   useEffect(() => {
-    getAllTeamMember()
+    getAllPartners()
   }, []);
 
   const handleConfirmation = () => {
     handleCloseModal(); // Close the modal after the action is confirmed.
 
     axiosInstance
-    .delete(`api/team-members/${tempDeleteMember._id}`)
+    .delete(`api/partners/${tempDeletePartner._id}`)
     .then((response) => {
-      getAllTeamMember()
+      getAllPartners()
       setDeleteSuccessMsg(response.data.message)
     })
     .catch((err) => {
@@ -51,7 +51,7 @@ export const TeamMembersTable = () => {
   };
 
   const TableRow = (props) => {
-    const { sortId, name, designation, _id } = props;
+    const { sortId, name, partnerType, _id } = props;
 
     return (
       <tr>
@@ -61,7 +61,7 @@ export const TeamMembersTable = () => {
         <td className="fw-bold">
           {name}
         </td>
-        <td>{designation}</td>
+        <td>{partnerType}</td>
         <td>
           <Dropdown as={ButtonGroup} className="mb-2 me-2">
             <Dropdown.Toggle size="sm" split variant="info">
@@ -69,7 +69,7 @@ export const TeamMembersTable = () => {
             </Dropdown.Toggle>
 
             <Dropdown.Menu className="user-dropdown dropdown-menu-left">
-              <Dropdown.Item as={Link} to={`/team-members/edit/${_id}`}>Edit</Dropdown.Item>
+              <Dropdown.Item as={Link} to={`/partners/edit/${_id}`}>Edit</Dropdown.Item>
               <Dropdown.Item
                 as="button" 
                 onClick={() => handleShowModal({ name, _id })}
@@ -95,13 +95,13 @@ export const TeamMembersTable = () => {
             <thead className="thead-light">
               <tr>
                 <th className="border-0">#</th>
-                <th className="border-0">Name</th>
-                <th className="border-0">Designation</th>
+                <th className="border-0">Partner Name</th>
+                <th className="border-0">Partner type</th>
                 <th className="border-0">Actions</th>
               </tr>
             </thead>
             <tbody>
-              {teamMembers.map(tm => <TableRow key={`team-member-${tm._id}`} {...tm} />)}
+              {partners.map(tm => <TableRow key={`team-member-${tm._id}`} {...tm} />)}
             </tbody>
           </Table>
         </Card.Body>
