@@ -106,13 +106,13 @@ export default (props = {}) => {
               </CollapsableNavItem>
 
               {/* Partners */}
-              <CollapsableNavItem eventKey="team-members/" title="Partners" icon={faUserNinja}>
+              <CollapsableNavItem eventKey="partners/" title="Partners" icon={faUserNinja}>
                 <NavItem title="All Partners" link={Routes.AllPartners.path} />
                 <NavItem title="Add New" icon={faUserPlus} link={Routes.CreatePartner.path} />
               </CollapsableNavItem>
 
               {/* Capability/Sectoral and Research */}
-              <CollapsableNavItem eventKey="team-members/" title="S. and Research" icon={faUserNinja}>
+              <CollapsableNavItem eventKey="capability/" title="S. and Research" icon={faUserNinja}>
                 <NavItem title="All S&R" link={Routes.AllSectoralAndResearch.path} />
                 <NavItem title="Add New" icon={faUserPlus} link={Routes.CreateSectoralAndResearch.path} />
               </CollapsableNavItem>
@@ -149,7 +149,7 @@ export default (props = {}) => {
               </CollapsableNavItem> */}
 
               {/* COMPONENTS */}
-              <CollapsableNavItem eventKey="components/" title="Components" icon={faBoxOpen}>
+              {/* <CollapsableNavItem eventKey="components/" title="Components" icon={faBoxOpen}>
                 <NavItem title="Accordion" link={Routes.Accordions.path} />
                 <NavItem title="Alerts" link={Routes.Alerts.path} />
                 <NavItem title="Badges" link={Routes.Badges.path} />
@@ -167,7 +167,7 @@ export default (props = {}) => {
                 <NavItem title="Tabs" link={Routes.Tabs.path} />
                 <NavItem title="Toasts" link={Routes.Toasts.path} />
                 <NavItem title="Tooltips" link={Routes.Tooltips.path} />
-              </CollapsableNavItem>
+              </CollapsableNavItem> */}
             </Nav>
           </div>
         </SimpleBar>

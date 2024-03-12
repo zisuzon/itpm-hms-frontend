@@ -28,15 +28,17 @@
 			& > .nav-link {
 				color: $light;
 				background-color: #2e3650;
-				border: $border-width solid lighten( $dark, 20% );
+				// border: $border-width solid lighten( $dark, 20% );
 			}
 		}
 		.nav-link {
 			color: $light;
-			border: $border-width solid $dark;
+			background-color: #2e3650;
+			// color: $light;
+			// border: $border-width solid $dark;
 			&:hover {
-				color: $light;
-				background-color: #2e3650;
+				color: #2e3650;
+				background-color: $light;
 			}
 			&.active {
 				color: $white;
@@ -172,7 +174,7 @@
 	.accordion-button{
 		&::after {
 			background-image: none;
-			content: '\f054';
+			content: '>';
 			font-family: $font-awesome-5;
 			font-size: $font-size-sm;
 			font-weight: 900;
