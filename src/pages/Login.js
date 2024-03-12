@@ -1,12 +1,12 @@
 
-import React, { useState, useContext } from "react";
+import React, { useState } from "react";
 import { useHistory } from 'react-router-dom';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEnvelope, faUnlockAlt } from "@fortawesome/free-solid-svg-icons";
-import { Col, Row, Form, Card, Button, FormCheck, Container, InputGroup } from '@themesberg/react-bootstrap';
+import { Col, Row, Form, Button, Container, InputGroup } from '@themesberg/react-bootstrap';
 import axiosInstance from '../axios'
 // import { AuthContext } from '../shared/context/auth-context';
-import { Routes } from "../routes";
+// import { Routes } from "../routes";
 import BgImage from "../assets/img/illustrations/signin.svg";
 
 export default () => {
@@ -38,22 +38,43 @@ export default () => {
 
     setValidated(true);
 
-    try {
-      const responseData = await axiosInstance
-      .post("api/users/login", formData)
-      .then((response) => {
-        const loginDataJSON = JSON.stringify(response.data);
+    // try {
+    //   const responseData = await axiosInstance
+    //   .post("api/users/login", formData)
+    //   .then(async (response) => {
+    //     const loginDataJSON = JSON.stringify(response.data);
 
-        localStorage.setItem('userData', loginDataJSON);
+    //     await localStorage.setItem('userData', loginDataJSON);
 
-        history.push('/')
-        // auth.login(responseData.userId, responseData.token);
-        // console.log('auth', auth)
-      })
-      .catch((err) => {
-        console.log('Login API error!')
-      })
+    //     history.push('/')
+    //   })
+    //   .catch((err) => {
+    //     console.log('Login API error!')
+    //   })
       
+    // } catch (error) {
+    //   console.log('Something went wrong!')
+    // }
+    try {
+      await axiosInstance
+        .post("api/users/login", formData)
+        .then(async (response) => {
+          const loginDataJSON = JSON.stringify(response.data);
+          
+          // Set userData in localStorage
+          await localStorage.setItem('userData', loginDataJSON);
+    
+          // Access userData only after it has been successfully set
+          const userData = JSON.parse(loginDataJSON);
+    
+          // Update axiosInstance headers with the new token
+          axiosInstance.defaults.headers.common['Authorization'] = `Bearer ${userData.token}`;
+          
+          history.push('/');
+        })
+        .catch((err) => {
+          console.log('Login API error!')
+        });
     } catch (error) {
       console.log('Something went wrong!')
     }

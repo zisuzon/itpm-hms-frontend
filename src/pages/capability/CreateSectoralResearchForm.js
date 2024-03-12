@@ -2,9 +2,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useHistory, useParams } from 'react-router-dom';
 import { Editor } from '@tinymce/tinymce-react';
-// import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-// import { faCalendarAlt } from '@fortawesome/free-solid-svg-icons';
-import { Col, Row, Card, Form, Button, InputGroup, Alert } from '@themesberg/react-bootstrap';
+import { Col, Row, Card, Form, Button, Alert } from '@themesberg/react-bootstrap';
 import axiosInstance from '../../axios'
 import './CreateSctoralResearchForm.scss';
 

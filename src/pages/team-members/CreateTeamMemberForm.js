@@ -280,7 +280,7 @@ export const CreateTeamMemberForm = () => {
             <Col sm={9} className="mb-3">
               <Form.Group id="description">
                 <Form.Label>Description</Form.Label>
-                <div className={!isDescriptionValid && 'invalid-editor'}>
+                <div className={!isDescriptionValid ? 'invalid-editor' : ''}>
                   <Editor
                   value={formData.description}
                     apiKey='q6tut9ishckw8kfsto8fek4zkak8ttiiu06x5wgev1rl0uzl'

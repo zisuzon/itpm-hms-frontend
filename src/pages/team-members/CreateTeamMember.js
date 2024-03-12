@@ -1,7 +1,5 @@
 import React from "react";
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faBoxOpen, faCartArrowDown, faChartPie, faChevronDown, faClipboard, faCommentDots, faFileAlt, faPlus, faRocket, faStore } from '@fortawesome/free-solid-svg-icons';
-import { Col, Row, Button, Dropdown } from '@themesberg/react-bootstrap';
+import { Col, Row } from '@themesberg/react-bootstrap';
 import { CreateTeamMemberForm } from "./CreateTeamMemberForm";
 
 export default () => {

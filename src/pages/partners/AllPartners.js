@@ -1,9 +1,6 @@
 
 import React from "react";
 import { Link } from 'react-router-dom';
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faHome } from "@fortawesome/free-solid-svg-icons";
-import { Breadcrumb } from '@themesberg/react-bootstrap';
 import { Button } from '@themesberg/react-bootstrap';
 
 import { PartnersTable } from "./PartnersTable";

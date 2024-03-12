@@ -1,8 +1,6 @@
 import React, { useEffect } from "react";
 import { useHistory, useParams } from 'react-router-dom';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faBoxOpen, faCartArrowDown, faChartPie, faChevronDown, faClipboard, faCommentDots, faFileAlt, faPlus, faRocket, faStore } from '@fortawesome/free-solid-svg-icons';
-import { Col, Row, Button, Dropdown } from '@themesberg/react-bootstrap';
+import { Col, Row } from '@themesberg/react-bootstrap';
 import { CreateSectoralResearchForm } from "./CreateSectoralResearchForm";
 
 export default () => {
@@ -13,7 +11,7 @@ export default () => {
     if(!id) {
       history.push('/capability/all-sectoral-research')
     }
-  }, []);
+  }, [history, id]);
 
   return (
     <>

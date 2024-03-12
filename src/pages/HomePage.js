@@ -39,7 +39,7 @@ import DocsChangelog from "./documentation/DocsChangelog";
 // components
 import Sidebar from "../components/Sidebar";
 import Navbar from "../components/Navbar";
-import Footer from "../components/Footer";
+// import Footer from "../components/Footer";
 import Preloader from "../components/Preloader";
 
 import Accordion from "./components/Accordion";
