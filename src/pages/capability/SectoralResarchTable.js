@@ -1,17 +1,17 @@
 import React, { useState, useEffect } from "react";
 import { Link } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faAngleDown } from '@fortawesome/free-solid-svg-icons';
-import { Card, Table, Dropdown, ButtonGroup, Alert } from '@themesberg/react-bootstrap';
+import { faAngleDown, faSearch } from '@fortawesome/free-solid-svg-icons';
+import { Row, Col, Card, Table, Dropdown, ButtonGroup, Alert, Form, InputGroup, Button } from '@themesberg/react-bootstrap';
 import { Routes } from "../../routes";
 import { teamMembers } from "../../data/tables";
 import ConfirmationModal from '../../pages/components/ConfirmModal'
 import axiosInstance from '../../axios'
 import DOMPurify from 'dompurify';
 
-const sanitizeHTML = (html) => ({
-  __html: DOMPurify.sanitize(html),
-});
+// const sanitizeHTML = (html) => ({
+//   __html: DOMPurify.sanitize(html),
+// });
 
 
 export const SectoralResarchTable = () => {
@@ -24,12 +24,54 @@ export const SectoralResarchTable = () => {
   }
   const [sectoralResearch, setSectoralResearch] = useState([]);
   const [deleteSuccessMsg, setDeleteSuccessMsg] = useState('');
+  const [searchTerm, setSearchTerm] = useState('');
+  const [researchSelectionTerm, setResearchSelectionTerm] = useState('');
+  const [searchResults, setSearchResults] = useState([]);
+
+  // General Search
+  const handleSearch = (event) => {
+    const searchText = event.target.value;
+    
+    setSearchTerm(searchText);
+    if (!searchText) {
+      setSearchResults(sectoralResearch)
+      return
+    }
+    
+    const filteredResults = sectoralResearch.filter(item => {
+      return item?.researchMethology.toLowerCase().includes(searchText.toLowerCase()) || 
+        item?.sectoralResearchCategory.toLowerCase().includes(searchText.toLowerCase()) ||
+        item?.studyObjective.toLowerCase().includes(searchText.toLowerCase()) ||
+        item?.studyTitle.toLowerCase().includes(searchText.toLowerCase())
+    });
+
+    setSearchResults(filteredResults)
+  };
+
+  // Search by Category
+  const handleResearchCategory = (e) => {
+    const researchCategorySelection = e.target.value;
+
+    setResearchSelectionTerm(researchCategorySelection)
+
+    if (researchCategorySelection === 'All') {
+      setSearchResults(sectoralResearch)
+      return
+    }
+    
+    const filteredResults = sectoralResearch.filter(item => {
+      return item?.sectoralResearchCategory === researchCategorySelection
+    });
+
+    setSearchResults(filteredResults)
+  };
 
   function getAllSectoralResearch() {
     axiosInstance
     .get("api/sectoral-and-research")
     .then((response) => {
       setSectoralResearch(response.data.sectoralResearch)
+      setSearchResults(response.data.sectoralResearch)
     })
     .catch((err) => {
       console.log('Error!')
@@ -105,6 +147,53 @@ export const SectoralResarchTable = () => {
 
   return (
     <>
+      <Row>
+          {/* Search */}
+          <Col md={5} className="mb-3">
+            <InputGroup>
+              <InputGroup.Text><FontAwesomeIcon icon={faSearch} /></InputGroup.Text>
+              <Form.Control
+                type="text"
+                placeholder="Search"
+                value={searchTerm}
+                onChange={handleSearch}
+              />
+            </InputGroup>
+          </Col>
+          {/* Research Type DropDown */}
+          <Col md={5} className="mb-3">
+            <Form.Group id="sectoralResearchCategory" className="mb-3">
+              <Form.Select
+                required
+                name="sectoralResearchCategory"
+                value={researchSelectionTerm}
+                onChange={handleResearchCategory}
+              >
+                <option defaultValue>All</option>
+                <option>Health and Nutrition</option>
+                <option>Education</option>
+                <option>Governance, Proverty and Gender Issues</option>
+                <option>Trade and Industry</option>
+              </Form.Select>
+            </Form.Group>
+          </Col>
+
+          <Col md={2} className="mb-3">
+            <Button
+              variant="close" 
+              className="m-1"
+              onClick={() => { 
+                setSearchResults(sectoralResearch) 
+                setResearchSelectionTerm('All')
+                setSearchTerm('')
+              }}
+              ></Button>
+          </Col>
+      </Row>
+
+      <br />
+
+      {/* Table */}
       <Card border="light" className="shadow-sm mb-4">
         <Card.Body className="pb-0">
           {deleteSuccessMsg && (
@@ -123,7 +212,7 @@ export const SectoralResarchTable = () => {
               </tr>
             </thead>
             <tbody>
-              {sectoralResearch.map((tm, index ) => <TableRow key={`sectoral-research-${index}`} {...tm} sortId={index + 1} />)}
+              {searchResults.map((tm, index ) => <TableRow key={`sectoral-research-${index}`} {...tm} sortId={index + 1} />)}
             </tbody>
           </Table>
         </Card.Body>
