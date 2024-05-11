@@ -2,8 +2,10 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useHistory, useParams } from 'react-router-dom';
 import { Editor } from '@tinymce/tinymce-react';
-import { Col, Row, Card, Form, Button, Alert } from '@themesberg/react-bootstrap';
+import { Col, Row, Card, Form, Button, Alert, Image } from '@themesberg/react-bootstrap';
 import axiosInstance from '../../axios'
+import PlaceholderPP from '../../assets/img/pp-placeholder.jpeg'
+import {BE_IMAGE_PATH} from '../../utils/constants'
 
 export const CreateTeamMemberForm = () => {
   const { id } = useParams();
@@ -20,12 +22,16 @@ export const CreateTeamMemberForm = () => {
     description: '',
     sortId: '',
     image: '',
-    listImage: '',
     address: '',
     email: '',
     phone: '',
     designation: '',
   });
+  // Image upload
+  const filePickerRef = useRef();
+  const [file, setFile] = useState();
+  const [previewUrl, setPreviewUrl] = useState();
+  const maximumSize = 2 * 1024 * 1024 // 2MB
 
   function getTeamMemberById(memberId) {
     axiosInstance
@@ -41,9 +47,29 @@ export const CreateTeamMemberForm = () => {
   }
 
   function createMember() {
+    if(!formData.image) {
+      setFormError('Member image missing!')
+      return
+    }
+
+    const payloadFormData = new FormData()
+    payloadFormData.append('name', formData.name)
+    payloadFormData.append('shortDescription', formData.shortDescription)
+    payloadFormData.append('description', formData.description)
+    payloadFormData.append('sortId', formData.sortId)
+    payloadFormData.append('image', formData.image)
+    payloadFormData.append('email', formData.email)
+    payloadFormData.append('phone', formData.phone)
+    payloadFormData.append('designation', formData.designation)
+
     try {
       axiosInstance
-      .post("api/team-members", formData)
+      .post("api/team-members", payloadFormData, {
+        headers: {
+          'Accept': '*/*',
+          'Content-Type': 'multipart/form-data'
+        }
+      })
       .then((response) => {
         history.push('/team-members/all-team-members')
       })
@@ -58,9 +84,29 @@ export const CreateTeamMemberForm = () => {
   }
 
   function updateMember(memberId) {
+    if(!formData.image) {
+      setFormError('Member image missing!')
+      return
+    }
+
+    const payloadFormData = new FormData()
+    payloadFormData.append('name', formData.name)
+    payloadFormData.append('shortDescription', formData.shortDescription)
+    payloadFormData.append('description', formData.description)
+    payloadFormData.append('sortId', formData.sortId)
+    payloadFormData.append('image', formData.image)
+    payloadFormData.append('email', formData.email)
+    payloadFormData.append('phone', formData.phone)
+    payloadFormData.append('designation', formData.designation)
+
     try {
       axiosInstance
-      .patch(`api/team-members/${memberId}`, formData)
+      .patch(`api/team-members/${memberId}`, payloadFormData, {
+        headers: {
+          'Accept': '*/*',
+          'Content-Type': 'multipart/form-data'
+        }
+      })
       .then((response) => {
         setFormSuccess('Member has been updated!')
       })
@@ -118,6 +164,56 @@ export const CreateTeamMemberForm = () => {
     }
   };
 
+  // Image upload
+  const pickImageHandler = () => {
+    filePickerRef.current.click();
+  };
+
+  useEffect(() => {
+    if (!file) {
+      return;
+    }
+    const fileReader = new FileReader();
+    fileReader.onload = () => {
+      console.log(fileReader.result)
+      setPreviewUrl(fileReader.result);
+    };
+    
+    fileReader.readAsDataURL(file);
+  }, [file]);
+
+  const pickedHandler = event => {
+    if (!event.target.files || event.target.files.length > 1) {
+      setFormError('Something went wrong with your upload!')
+      return
+    }
+
+    const pickedFile = event.target.files[0];
+
+    if(pickedFile.size >= maximumSize) {
+      setFormError('Image size must not exceed 2MB!')
+      return
+    }
+    
+    setFile(pickedFile);
+    setFormData({
+      ...formData,
+      image: pickedFile,
+    });
+  };
+
+  function getImage() {
+    if(previewUrl) {
+      return previewUrl
+    }
+
+    if(formData?.image) {
+      return `${BE_IMAGE_PATH}/${formData?.image}`
+    }
+
+    return PlaceholderPP
+  }
+
 
   return (
     <Card border="light" className="bg-white shadow-sm mb-4">
@@ -136,11 +232,32 @@ export const CreateTeamMemberForm = () => {
           </Alert>
         )}
 
+        <Row>
+          <Col md={4} className="mb-3">
+            <Card style={{ width: '12rem', height: '12rem' }}>
+              <Card.Img style={{ width: '12rem', height: '12rem' }} variant="top" src={getImage()} />
+            </Card>
+          </Col>
+          <Col md={6} className="mt-3">
+            <Button variant="outline-primary" onClick={pickImageHandler}>Pick Photo</Button>
+          </Col>
+        </Row>
+        
         <Form 
           noValidate
           validated={validated}
           onSubmit={handleSubmit}>
           <Row>
+            {/* Image upload input form */}
+            <input
+              id='image'
+              ref={filePickerRef}
+              style={{ display: 'none' }}
+              type="file"
+              accept=".jpg,.png,.jpeg"
+              onChange={pickedHandler}
+            />
+
             {/* Name */}
             <Col md={6} className="mb-3">
               <Form.Group id="name">
@@ -171,20 +288,6 @@ export const CreateTeamMemberForm = () => {
           </Row>
 
           <Row className="align-items-center">
-            {/* Image URL */}
-            <Col md={6} className="mb-3">
-              <Form.Group id="imageUrl">
-                <Form.Label>Image URL</Form.Label>
-                <Form.Control
-                  required
-                  type="text"
-                  placeholder="https://url-of-the-profile-image.com" 
-                  name="image"
-                  value={formData.image}
-                  onChange={handleChange}
-                />
-              </Form.Group>
-            </Col>
             {/* Designation */}
             <Col md={6} className="mb-3">
               <Form.Group id="designation">
@@ -194,23 +297,6 @@ export const CreateTeamMemberForm = () => {
                   type="text"
                   name="designation"
                   value={formData.designation}
-                  onChange={handleChange}
-                />
-              </Form.Group>
-            </Col>
-          </Row>
-
-          <Row>
-            {/* List Image URL */}
-            <Col md={6} className="mb-3">
-              <Form.Group id="listImageUrl">
-                <Form.Label>List Image URL</Form.Label>
-                <Form.Control
-                  required
-                  type="text"
-                  placeholder="https://url-of-the-profile-image.com" 
-                  name="listImage"
-                  value={formData.listImage}
                   onChange={handleChange}
                 />
               </Form.Group>
@@ -228,6 +314,10 @@ export const CreateTeamMemberForm = () => {
                 />
               </Form.Group>
             </Col>
+          </Row>
+
+          <Row>
+            
           </Row>
 
           <Row className="align-items-center">

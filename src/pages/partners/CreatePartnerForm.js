@@ -1,8 +1,10 @@
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useHistory, useParams } from 'react-router-dom';
 import { Col, Row, Card, Form, Button, Alert } from '@themesberg/react-bootstrap';
 import axiosInstance from '../../axios'
+import PlaceholderPP from '../../assets/img/pp-placeholder.jpeg'
+import {BE_IMAGE_PATH} from '../../utils/constants'
 
 export const CreatePartnerForm = () => {
   const { id } = useParams();
@@ -19,6 +21,12 @@ export const CreatePartnerForm = () => {
     partnerUrl: '',
   });
 
+  // Image upload
+  const filePickerRef = useRef();
+  const [file, setFile] = useState();
+  const [previewUrl, setPreviewUrl] = useState();
+  const maximumSize = 2 * 1024 * 1024 // 2MB
+
   function getPartnerById(memberId) {
     axiosInstance
     .get(`api/partners/${memberId}`)
@@ -33,9 +41,26 @@ export const CreatePartnerForm = () => {
   }
 
   function createPartner() {
+    if(!formData.partnerImage) {
+      setFormError('Partner image missing!')
+      return
+    }
+
+    const payloadFormData = new FormData()
+    payloadFormData.append('name', formData.name)
+    payloadFormData.append('partnerUrl', formData.partnerUrl)
+    payloadFormData.append('partnerType', formData.partnerType)
+    payloadFormData.append('sortId', formData.sortId)
+    payloadFormData.append('partnerImage', formData.partnerImage)
+
     try {
       axiosInstance
-      .post("api/partners", formData)
+      .post("api/partners", payloadFormData, {
+        headers: {
+          'Accept': '*/*',
+          'Content-Type': 'multipart/form-data'
+        }
+      })
       .then((response) => {
         history.push('/partners/all-partners')
       })
@@ -50,9 +75,26 @@ export const CreatePartnerForm = () => {
   }
 
   function updateMember(memberId) {
+    if(!formData.partnerImage) {
+      setFormError('Partner image missing!')
+      return
+    }
+
+    const payloadFormData = new FormData()
+    payloadFormData.append('name', formData.name)
+    payloadFormData.append('partnerUrl', formData.partnerUrl)
+    payloadFormData.append('partnerType', formData.partnerType)
+    payloadFormData.append('sortId', formData.sortId)
+    payloadFormData.append('partnerImage', formData.partnerImage)
+
     try {
       axiosInstance
-      .patch(`api/partners/${memberId}`, formData)
+      .patch(`api/partners/${memberId}`, payloadFormData, {
+        headers: {
+          'Accept': '*/*',
+          'Content-Type': 'multipart/form-data'
+        }
+      })
       .then((response) => {
         setFormSuccess('Partner has been updated!')
       })
@@ -99,6 +141,55 @@ export const CreatePartnerForm = () => {
     }
   };
 
+  // Image upload
+  const pickImageHandler = () => {
+    filePickerRef.current.click();
+  };
+
+  useEffect(() => {
+    if (!file) {
+      return;
+    }
+    const fileReader = new FileReader();
+    fileReader.onload = () => {
+      console.log(fileReader.result)
+      setPreviewUrl(fileReader.result);
+    };
+    
+    fileReader.readAsDataURL(file);
+  }, [file]);
+
+  const pickedHandler = event => {
+    if (!event.target.files || event.target.files.length > 1) {
+      setFormError('Something went wrong with your upload!')
+      return
+    }
+
+    const pickedFile = event.target.files[0];
+
+    if(pickedFile.size >= maximumSize) {
+      setFormError('Image size must not exceed 2MB!')
+      return
+    }
+    
+    setFile(pickedFile);
+    setFormData({
+      ...formData,
+      partnerImage: pickedFile,
+    });
+  };
+
+  function getImage() {
+    if(previewUrl) {
+      return previewUrl
+    }
+
+    if(formData?.partnerImage) {
+      return `${BE_IMAGE_PATH}/${formData?.partnerImage}`
+    }
+
+    return PlaceholderPP
+  }
 
   return (
     <Card border="light" className="bg-white shadow-sm mb-4">
@@ -117,11 +208,31 @@ export const CreatePartnerForm = () => {
           </Alert>
         )}
 
+        <Row>
+          <Col md={4} className="mb-3">
+            <Card style={{ width: '20rem', height: '12rem' }}>
+              <Card.Img style={{ width: '20rem', height: '12rem' }} variant="top" src={getImage()} />
+            </Card>
+          </Col>
+          <Col md={6} className="mt-3">
+            <Button variant="outline-primary" onClick={pickImageHandler}>Pick Photo</Button>
+          </Col>
+        </Row>
+
         <Form 
           noValidate
           validated={validated}
           onSubmit={handleSubmit}>
           <Row>
+            {/* Image upload input form */}
+            <input
+              id='image'
+              ref={filePickerRef}
+              style={{ display: 'none' }}
+              type="file"
+              accept=".jpg,.png,.jpeg"
+              onChange={pickedHandler}
+            />
             {/* Name */}
             <Col md={6} className="mb-3">
               <Form.Group id="name">
@@ -152,20 +263,6 @@ export const CreatePartnerForm = () => {
           </Row>
 
           <Row>
-            {/* Partner Image */}
-            <Col md={6} className="mb-3">
-              <Form.Group id="partnerImage">
-                <Form.Label>Partner Image</Form.Label>
-                <Form.Control
-                  required
-                  type="text"
-                  name="partnerImage"
-                  placeholder="https://url-of-the-profile-image.com" 
-                  value={formData.partnerImage}
-                  onChange={handleChange}
-                />
-              </Form.Group>
-            </Col>
             {/* Partner URL */}
             <Col md={6} className="mb-3">
               <Form.Group id="partnerUrl">
