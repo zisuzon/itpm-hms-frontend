@@ -25,18 +25,15 @@ import DOMPurify from "dompurify";
 
 export const DoctorTable = () => {
   const [showModal, setShowModal] = useState(false);
-  const [tempDeleteSectoralResearch, setTempDeleteSectoralResearch] = useState(
-    {}
-  );
+  const [tempDeleteDoctor, setTempDeleteDoctor] = useState({});
   const handleCloseModal = () => setShowModal(false);
-  const handleShowModal = (tempDeleteSectoralResearch) => {
-    setTempDeleteSectoralResearch(tempDeleteSectoralResearch);
+  const handleShowModal = (tempDeleteDoctor) => {
+    setTempDeleteDoctor(tempDeleteDoctor);
     setShowModal(true);
   };
-  const [sectoralResearch, setSectoralResearch] = useState([]);
+  const [doctors, setDoctors] = useState([]);
   const [deleteSuccessMsg, setDeleteSuccessMsg] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
-  const [researchSelectionTerm, setResearchSelectionTerm] = useState("");
   const [searchResults, setSearchResults] = useState([]);
 
   // General Search
@@ -45,50 +42,29 @@ export const DoctorTable = () => {
 
     setSearchTerm(searchText);
     if (!searchText) {
-      setSearchResults(sectoralResearch);
+      setSearchResults(doctors);
       return;
     }
 
-    const filteredResults = sectoralResearch.filter((item) => {
+    const filteredResults = doctors.filter((item) => {
       return (
-        item?.researchMethology
-          .toLowerCase()
-          .includes(searchText.toLowerCase()) ||
-        item?.sectoralResearchCategory
-          .toLowerCase()
-          .includes(searchText.toLowerCase()) ||
-        item?.studyObjective.toLowerCase().includes(searchText.toLowerCase()) ||
-        item?.studyTitle.toLowerCase().includes(searchText.toLowerCase())
+        item?.name?.toLowerCase().includes(searchText.toLowerCase()) ||
+        item?.designation?.toLowerCase().includes(searchText.toLowerCase()) ||
+        item?.department?.toLowerCase().includes(searchText.toLowerCase()) ||
+        item?.contact?.toLowerCase().includes(searchText.toLowerCase()) ||
+        item?.email?.toLowerCase().includes(searchText.toLowerCase())
       );
     });
 
     setSearchResults(filteredResults);
   };
 
-  // Search by Category
-  const handleResearchCategory = (e) => {
-    const researchCategorySelection = e.target.value;
-
-    setResearchSelectionTerm(researchCategorySelection);
-
-    if (researchCategorySelection === "All") {
-      setSearchResults(sectoralResearch);
-      return;
-    }
-
-    const filteredResults = sectoralResearch.filter((item) => {
-      return item?.sectoralResearchCategory === researchCategorySelection;
-    });
-
-    setSearchResults(filteredResults);
-  };
-
-  function getAllSectoralResearch() {
+  function getAllDoctors() {
     axiosInstance
-      .get("api/sectoral-and-research")
+      .get("api/doctors")
       .then((response) => {
-        setSectoralResearch(response.data.sectoralResearch);
-        setSearchResults(response.data.sectoralResearch);
+        setDoctors(response.data.doctors);
+        setSearchResults(response.data.doctors);
       })
       .catch((err) => {
         console.log("Error!");
@@ -96,17 +72,16 @@ export const DoctorTable = () => {
   }
 
   useEffect(() => {
-    getAllSectoralResearch();
+    getAllDoctors();
   }, []);
 
   const handleConfirmation = () => {
-    console.log("tempDeleteSectoralResearch", tempDeleteSectoralResearch);
     handleCloseModal(); // Close the modal after the action is confirmed.
 
     axiosInstance
-      .delete(`api/sectoral-and-research/${tempDeleteSectoralResearch.id}`)
+      .delete(`api/doctors/${tempDeleteDoctor.id}`)
       .then((response) => {
-        getAllSectoralResearch();
+        getAllDoctors();
         setDeleteSuccessMsg(response.data.message);
       })
       .catch((err) => {
@@ -115,8 +90,16 @@ export const DoctorTable = () => {
   };
 
   const TableRow = (props) => {
-    const { sortId, studyTitle, studyObjective, researchMethology, _id } =
-      props;
+    const {
+      name,
+      designation,
+      department,
+      teamId,
+      contact,
+      email,
+      isActive,
+      _id,
+    } = props;
 
     const removeMarkup = (htmlString) => {
       const tempDiv = document.createElement("div");
@@ -125,6 +108,9 @@ export const DoctorTable = () => {
     };
 
     const formatTableText = (text) => {
+      if (!text || text.trim() === "") {
+        return "N/A";
+      }
       const truncateDots = text.length >= 20 ? "..." : "";
       // Removing markup just to show text in table.
       const formattedText = removeMarkup(text).substring(0, 20);
@@ -135,21 +121,37 @@ export const DoctorTable = () => {
       <tr>
         <td>
           <Card.Link href="#" className="text-primary fw-bold">
-            {sortId}
+            {_id ? `${_id.substring(0, 2)}...` : ""}
           </Card.Link>
         </td>
         <td
           className="fw-bold"
-          dangerouslySetInnerHTML={{ __html: formatTableText(studyTitle) }}
+          dangerouslySetInnerHTML={{ __html: formatTableText(name) }}
         ></td>
         <td
-          dangerouslySetInnerHTML={{ __html: formatTableText(studyObjective) }}
+          dangerouslySetInnerHTML={{ __html: formatTableText(designation) }}
         ></td>
         <td
           dangerouslySetInnerHTML={{
-            __html: formatTableText(researchMethology),
+            __html: formatTableText(department),
           }}
         ></td>
+        <td
+          dangerouslySetInnerHTML={{
+            __html: formatTableText(teamId),
+          }}
+        ></td>
+        <td
+          dangerouslySetInnerHTML={{
+            __html: formatTableText(contact),
+          }}
+        ></td>
+        <td
+          dangerouslySetInnerHTML={{
+            __html: formatTableText(email),
+          }}
+        ></td>
+        <td>{isActive ? "Active" : "Inactive"}</td>
         <td>
           <Dropdown as={ButtonGroup} className="mb-2 me-2">
             <Dropdown.Toggle size="sm" split variant="info">
@@ -158,7 +160,7 @@ export const DoctorTable = () => {
 
             <Dropdown.Menu className="user-dropdown dropdown-menu-left">
               {/* <Dropdown.Item href="#action">Edit</Dropdown.Item> */}
-              <Dropdown.Item as={Link} to={`/capability/edit/${_id}`}>
+              <Dropdown.Item as={Link} to={`/doctors/edit/${_id}`}>
                 Edit
               </Dropdown.Item>
               <Dropdown.Item
@@ -166,7 +168,7 @@ export const DoctorTable = () => {
                 onClick={() => handleShowModal({ id: _id })}
                 className="text-danger"
               >
-                Delete
+                Remove
               </Dropdown.Item>
             </Dropdown.Menu>
           </Dropdown>
@@ -192,31 +194,13 @@ export const DoctorTable = () => {
             />
           </InputGroup>
         </Col>
-        {/* Research Type DropDown */}
-        <Col md={5} className="mb-3">
-          <Form.Group id="sectoralResearchCategory" className="mb-3">
-            <Form.Select
-              required
-              name="sectoralResearchCategory"
-              value={researchSelectionTerm}
-              onChange={handleResearchCategory}
-            >
-              <option defaultValue>All</option>
-              <option>Health and Nutrition</option>
-              <option>Education</option>
-              <option>Governance, Proverty and Gender Issues</option>
-              <option>Trade and Industry</option>
-            </Form.Select>
-          </Form.Group>
-        </Col>
 
         <Col md={2} className="mb-3">
           <Button
             variant="close"
             className="m-1"
             onClick={() => {
-              setSearchResults(sectoralResearch);
-              setResearchSelectionTerm("All");
+              setSearchResults(doctors);
               setSearchTerm("");
             }}
           ></Button>
@@ -238,19 +222,19 @@ export const DoctorTable = () => {
             <thead className="thead-light">
               <tr>
                 <th className="border-0">Sl.</th>
-                <th className="border-0">Study Title</th>
-                <th className="border-0">Study Objective</th>
-                <th className="border-0">Research Methodology</th>
+                <th className="border-0">Name</th>
+                <th className="border-0">Designation</th>
+                <th className="border-0">Department</th>
+                <th className="border-0">Team</th>
+                <th className="border-0">Contact</th>
+                <th className="border-0">Email</th>
+                <th className="border-0">Status</th>
                 <th className="border-0">Actions</th>
               </tr>
             </thead>
             <tbody>
               {searchResults.map((tm, index) => (
-                <TableRow
-                  key={`sectoral-research-${index}`}
-                  {...tm}
-                  sortId={index + 1}
-                />
+                <TableRow key={`doctor-${index}`} {...tm} sortId={index + 1} />
               ))}
             </tbody>
           </Table>

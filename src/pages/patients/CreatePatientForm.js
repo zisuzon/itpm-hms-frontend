@@ -18,6 +18,17 @@ export const CreatePatientForm = () => {
   const { id } = useParams();
   const history = useHistory();
 
+  // {
+  //   "name": "John Doe",
+  //   "dateOfBirth": "1990-05-15",
+  //   "gender": "Male",
+  //   "contact": "+1234567890",
+  //   "emergencyContact": "+1234567891",
+  //   "history": "Previous heart condition",
+  //   "assignedWard": "ward_id_here",
+  //   "assignedTeam": "team_id_here"
+  // }
+
   const editorRef = useRef(null);
   const [validated, setValidated] = useState(false);
   const [isDescriptionValid, setIsDescriptionValid] = useState(true);
@@ -25,20 +36,16 @@ export const CreatePatientForm = () => {
   const [formSuccess, setFormSuccess] = useState("");
   const [formData, setFormData] = useState({
     name: "",
-    shortDescription: "",
-    description: "",
-    sortId: "",
-    image: "",
-    address: "",
-    email: "",
-    phone: "",
-    designation: "",
+    dateOfBirth: "",
+    gender: "",
+    contact: "",
+    emergencyContact: "",
+    history: "",
+    assignedWard: "",
+    assignedTeam: "",
   });
-  // Image upload
-  const filePickerRef = useRef();
-  const [file, setFile] = useState();
-  const [previewUrl, setPreviewUrl] = useState();
-  const maximumSize = 2 * 1024 * 1024; // 2MB
+  const [wards, setWards] = useState([]);
+  const [doctorTeams, setDoctorTeams] = useState([]);
 
   function getPatientById(patientId) {
     axiosInstance
@@ -49,39 +56,57 @@ export const CreatePatientForm = () => {
         console.log("formData", formData);
       })
       .catch((err) => {
-        console.log("Error!");
+        console.log("Error getting patient by id!");
+      });
+  }
+
+  function getAllWards() {
+    axiosInstance
+      .get("api/wards")
+      .then((response) => {
+        setWards(response.data.wards);
+      })
+      .catch((err) => {
+        console.error("Error getting all wards!");
+      });
+  }
+
+  function getAllDoctorTeams() {
+    axiosInstance
+      .get("api/doctor-teams")
+      .then((response) => {
+        setDoctorTeams(response.data.teams);
+      })
+      .catch((err) => {
+        console.error("Error getting all doctor teams!");
       });
   }
 
   function createPatient() {
-    if (!formData.image) {
-      setFormError("Patient image missing!");
-      return;
-    }
-
-    const payloadFormData = new FormData();
-    payloadFormData.append("name", formData.name);
-    payloadFormData.append("shortDescription", formData.shortDescription);
-    payloadFormData.append("description", formData.description);
-    payloadFormData.append("sortId", formData.sortId);
-    payloadFormData.append("image", formData.image);
-    payloadFormData.append("email", formData.email);
-    payloadFormData.append("phone", formData.phone);
-    payloadFormData.append("designation", formData.designation);
+    const payloadFormData = {
+      name: formData.name,
+      dateOfBirth: formData.dateOfBirth,
+      gender: formData.gender,
+      contact: formData.contact,
+      emergencyContact: formData.emergencyContact,
+      history: formData.history,
+      assignedWard: formData.assignedWard,
+      assignedTeam: formData.assignedTeam,
+    };
 
     try {
       axiosInstance
         .post("api/patients", payloadFormData, {
           headers: {
             Accept: "*/*",
-            "Content-Type": "multipart/form-data",
+            "Content-Type": "application/json",
           },
         })
         .then((response) => {
           history.push("/patients/all-patients");
         })
         .catch((err) => {
-          console.log("Error!");
+          console.log("Error creating patient!");
           setFormError(err.response.data.message);
         });
     } catch (error) {
@@ -90,20 +115,16 @@ export const CreatePatientForm = () => {
   }
 
   function updatePatient(patientId) {
-    if (!formData.image) {
-      setFormError("Patient image missing!");
-      return;
-    }
-
-    const payloadFormData = new FormData();
-    payloadFormData.append("name", formData.name);
-    payloadFormData.append("shortDescription", formData.shortDescription);
-    payloadFormData.append("description", formData.description);
-    payloadFormData.append("sortId", formData.sortId);
-    payloadFormData.append("image", formData.image);
-    payloadFormData.append("email", formData.email);
-    payloadFormData.append("phone", formData.phone);
-    payloadFormData.append("designation", formData.designation);
+    const payloadFormData = {
+      name: formData.name,
+      dateOfBirth: formData.dateOfBirth,
+      gender: formData.gender,
+      contact: formData.contact,
+      emergencyContact: formData.emergencyContact,
+      history: formData.history,
+      assignedWard: formData.assignedWard,
+      assignedTeam: formData.assignedTeam,
+    };
 
     try {
       axiosInstance
@@ -117,7 +138,7 @@ export const CreatePatientForm = () => {
           setFormSuccess("Patient has been updated!");
         })
         .catch((err) => {
-          console.log("Error!");
+          console.log("Error updating patient!");
           setFormError(err.response.data.message);
         });
     } catch (error) {
@@ -126,6 +147,8 @@ export const CreatePatientForm = () => {
   }
 
   useEffect(() => {
+    getAllWards();
+    getAllDoctorTeams();
     if (id) {
       getPatientById(id);
     }
@@ -169,94 +192,17 @@ export const CreatePatientForm = () => {
     }
   };
 
-  // Image upload
-  const pickImageHandler = () => {
-    filePickerRef.current.click();
-  };
-
-  useEffect(() => {
-    if (!file) {
-      return;
-    }
-    const fileReader = new FileReader();
-    fileReader.onload = () => {
-      console.log(fileReader.result);
-      setPreviewUrl(fileReader.result);
-    };
-
-    fileReader.readAsDataURL(file);
-  }, [file]);
-
-  const pickedHandler = (event) => {
-    if (!event.target.files || event.target.files.length > 1) {
-      setFormError("Something went wrong with your upload!");
-      return;
-    }
-
-    const pickedFile = event.target.files[0];
-
-    if (pickedFile.size >= maximumSize) {
-      setFormError("Image size must not exceed 2MB!");
-      return;
-    }
-
-    setFile(pickedFile);
-    setFormData({
-      ...formData,
-      image: pickedFile,
-    });
-  };
-
-  function getImage() {
-    if (previewUrl) {
-      return previewUrl;
-    }
-
-    if (formData?.image) {
-      return `${BE_IMAGE_PATH}/${formData?.image}`;
-    }
-
-    return PlaceholderPP;
-  }
-
   return (
     <Card border="light" className="bg-white shadow-sm mb-4">
       <Card.Body>
-        <h5 className="mb-4">Add new Patient</h5>
+        <h5 className="mb-4">Admit new Patient</h5>
 
         {formError && <Alert variant="danger">{formError}</Alert>}
 
         {formSuccess && <Alert variant="success">{formSuccess}</Alert>}
 
-        <Row>
-          <Col md={4} className="mb-3">
-            <Card style={{ width: "12rem", height: "12rem" }}>
-              <Card.Img
-                style={{ width: "12rem", height: "12rem" }}
-                variant="top"
-                src={getImage()}
-              />
-            </Card>
-          </Col>
-          <Col md={6} className="mt-3">
-            <Button variant="outline-primary" onClick={pickImageHandler}>
-              Pick Photo
-            </Button>
-          </Col>
-        </Row>
-
         <Form noValidate validated={validated} onSubmit={handleSubmit}>
           <Row>
-            {/* Image upload input form */}
-            <input
-              id="image"
-              ref={filePickerRef}
-              style={{ display: "none" }}
-              type="file"
-              accept=".jpg,.png,.jpeg"
-              onChange={pickedHandler}
-            />
-
             {/* Name */}
             <Col md={6} className="mb-3">
               <Form.Group id="name">
@@ -265,21 +211,22 @@ export const CreatePatientForm = () => {
                   required
                   type="text"
                   name="name"
+                  placeholder="Patient's Name"
                   value={formData.name}
                   onChange={handleChange}
                 />
               </Form.Group>
             </Col>
-            {/* Sort ID */}
+            {/* Date of Birth */}
             <Col md={6} className="mb-3">
-              <Form.Group id="sortId">
-                <Form.Label>Position</Form.Label>
+              <Form.Group id="dateOfBirth">
+                <Form.Label>Date of Birth</Form.Label>
                 <Form.Control
                   required
-                  type="number"
-                  placeholder="Position number of the member in list"
-                  name="sortId"
-                  value={formData.sortId}
+                  type="date"
+                  placeholder="Patient's Date of Birth"
+                  name="dateOfBirth"
+                  value={formData.dateOfBirth}
                   onChange={handleChange}
                 />
               </Form.Group>
@@ -287,28 +234,35 @@ export const CreatePatientForm = () => {
           </Row>
 
           <Row className="align-items-center">
-            {/* Designation */}
+            {/* Gender */}
             <Col md={6} className="mb-3">
-              <Form.Group id="designation">
-                <Form.Label>Designation</Form.Label>
-                <Form.Control
+              <Form.Group id="gender">
+                <Form.Label>Gender</Form.Label>
+                <Form.Select
                   required
-                  type="text"
-                  name="designation"
-                  value={formData.designation}
+                  name="gender"
+                  value={formData.gender}
                   onChange={handleChange}
-                />
+                >
+                  <option value="" disabled>
+                    Select gender
+                  </option>
+                  <option value="Male">Male</option>
+                  <option value="Female">Female</option>
+                  <option value="Other">Other</option>
+                </Form.Select>
               </Form.Group>
             </Col>
 
             {/* Email */}
             <Col md={6} className="mb-3">
-              <Form.Group id="emal">
-                <Form.Label>Email</Form.Label>
+              <Form.Group id="contact">
+                <Form.Label>Contact</Form.Label>
                 <Form.Control
-                  type="email"
-                  name="email"
-                  value={formData.email}
+                  type="text"
+                  name="contact"
+                  placeholder="Contact"
+                  value={formData.contact}
                   onChange={handleChange}
                 />
               </Form.Group>
@@ -320,12 +274,13 @@ export const CreatePatientForm = () => {
           <Row className="align-items-center">
             {/* Phone */}
             <Col md={6} className="mb-3">
-              <Form.Group id="phone">
-                <Form.Label>Phone</Form.Label>
+              <Form.Group id="emergencyContact">
+                <Form.Label>Emergency Contact</Form.Label>
                 <Form.Control
-                  type="number"
-                  name="phone"
-                  value={formData.phone}
+                  type="text"
+                  name="emergencyContact"
+                  placeholder="Emergency Contact"
+                  value={formData.emergencyContact}
                   onChange={handleChange}
                 />
               </Form.Group>
@@ -335,64 +290,63 @@ export const CreatePatientForm = () => {
           {/* Address */}
           <Row>
             <Col sm={9} className="mb-3">
-              <Form.Group id="shortDescription">
-                <Form.Label>Address</Form.Label>
+              <Form.Group id="history">
+                <Form.Label>History</Form.Label>
                 <Form.Control
                   type="text"
-                  name="address"
-                  value={formData.address}
+                  name="history"
+                  placeholder="Patient's History"
+                  value={formData.history}
                   onChange={handleChange}
                 />
               </Form.Group>
             </Col>
           </Row>
 
-          {/* Short Description */}
+          {/* Assigned Ward */}
           <Row>
             <Col sm={9} className="mb-3">
-              <Form.Group id="shortDescription">
-                <Form.Label>Short Description</Form.Label>
-                <Form.Control
-                  type="text"
-                  name="shortDescription"
-                  value={formData.shortDescription}
+              <Form.Group className="mb-3" id="assignedWard">
+                <Form.Label>Assigned Ward</Form.Label>
+                <Form.Select
+                  required
+                  name="assignedWard"
+                  value={formData.assignedWard}
                   onChange={handleChange}
-                />
+                >
+                  <option value="" disabled>
+                    Select ward
+                  </option>
+                  {wards.map((ward) => (
+                    <option key={ward._id} value={ward._id}>
+                      {ward.name} - {ward.wardGender}
+                    </option>
+                  ))}
+                </Form.Select>
               </Form.Group>
             </Col>
           </Row>
 
-          {/* Description */}
+          {/* Assigned Team */}
           <Row>
             <Col sm={9} className="mb-3">
-              <Form.Group id="description">
-                <Form.Label>Description</Form.Label>
-                <div className={!isDescriptionValid ? "invalid-editor" : ""}>
-                  <Editor
-                    value={formData.description}
-                    apiKey="q6tut9ishckw8kfsto8fek4zkak8ttiiu06x5wgev1rl0uzl"
-                    onInit={(evt, editor) => (editorRef.current = editor)}
-                    init={{
-                      height: 300,
-                      menubar: false,
-                      plugins: [
-                        "advlist autolink lists link image charmap print preview anchor",
-                        "searchreplace visualblocks code fullscreen",
-                        "insertdatetime media table paste code help wordcount",
-                      ],
-                      toolbar:
-                        "undo redo | formatselect | " +
-                        "bold italic backcolor | alignleft aligncenter " +
-                        "alignright alignjustify | bullist numlist outdent indent | " +
-                        "removeformat | help",
-                      content_style:
-                        "body { font-family:Helvetica,Arial,sans-serif; font-size:14px }",
-                    }}
-                    onEditorChange={(content, editor) =>
-                      handleEditorChange(content, editor, "description")
-                    }
-                  />
-                </div>
+              <Form.Group className="mb-3" id="assignedTeam">
+                <Form.Label>Assigned Doctor Team</Form.Label>
+                <Form.Select
+                  required
+                  name="assignedTeam"
+                  value={formData.assignedTeam}
+                  onChange={handleChange}
+                >
+                  <option value="" disabled>
+                    Select team
+                  </option>
+                  {doctorTeams.map((team) => (
+                    <option key={team._id} value={team._id}>
+                      {team?.name} - {team?.department}
+                    </option>
+                  ))}
+                </Form.Select>
               </Form.Group>
             </Col>
           </Row>

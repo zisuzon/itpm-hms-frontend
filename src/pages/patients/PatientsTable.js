@@ -86,17 +86,29 @@ export const PatientsTable = () => {
   };
 
   const TableRow = (props) => {
-    const { sortId, name, designation, _id } = props;
+    const {
+      name,
+      gender,
+      contact,
+      emergencyContact,
+      history,
+      assignedWard,
+      assignedTeam,
+      _id,
+    } = props;
 
     return (
       <tr>
         <td>
           <Card.Link href="#" className="text-primary fw-bold">
-            {sortId}
+            {_id ? `${_id.substring(0, 2)}...` : ""}
           </Card.Link>
         </td>
         <td className="fw-bold">{name}</td>
-        <td>{designation}</td>
+        <td>{gender}</td>
+        <td>{emergencyContact}</td>
+        <td>{assignedWard}</td>
+        <td>{assignedTeam}</td>
         <td>
           <Dropdown as={ButtonGroup} className="mb-2 me-2">
             <Dropdown.Toggle size="sm" split variant="info">
@@ -112,7 +124,7 @@ export const PatientsTable = () => {
                 onClick={() => handleShowModal({ name, _id })}
                 className="text-danger"
               >
-                Delete
+                Discharge
               </Dropdown.Item>
             </Dropdown.Menu>
           </Dropdown>
@@ -166,7 +178,10 @@ export const PatientsTable = () => {
               <tr>
                 <th className="border-0">#</th>
                 <th className="border-0">Name</th>
-                <th className="border-0">Designation</th>
+                <th className="border-0">Gender</th>
+                <th className="border-0">Emergency Contact</th>
+                <th className="border-0">Ward</th>
+                <th className="border-0">Doctor Team</th>
                 <th className="border-0">Actions</th>
               </tr>
             </thead>

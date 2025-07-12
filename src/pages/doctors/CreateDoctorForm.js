@@ -1,6 +1,5 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import { useHistory, useParams } from "react-router-dom";
-import { Editor } from "@tinymce/tinymce-react";
 import {
   Col,
   Row,
@@ -10,70 +9,125 @@ import {
   Alert,
 } from "@themesberg/react-bootstrap";
 import axiosInstance from "../../axios";
-import "./CreateDoctorForm.scss";
+
+// {
+//   "name": "Dr. Philip",
+//   "licence": "MD789022",
+//   "designation": "Junior Consultant",
+//   "department": "Medicine",
+//   "teamId": "TEAM003",
+//   "contact": "+1987654331",
+//   "email": "philip@hospital.com",
+//   "address": "456 Southmead Hospital Ave, City, State",
+//   "isActive": true
+// }
 
 export const CreateDoctorForm = () => {
-  const editorRef = useRef(null);
-
   const { id } = useParams();
   const history = useHistory();
 
   const [validated, setValidated] = useState(false);
   const [formError, setFormError] = useState("");
   const [formSuccess, setFormSuccess] = useState("");
-  const [isSectoralResearchCategoryValid, setIsSectoralResearchCategoryValid] =
-    useState(true);
-  const [isTitleEditorValid, setIsTitleEditorValid] = useState(true);
-  const [isObjectiveEditorValid, setIsObjectiveEditorValid] = useState(true);
-  const [isResearchMethologyValid, setIsResearchMethologyValid] =
-    useState(true);
+  const [doctorTeams, setDoctorTeams] = useState([]);
 
   const [formData, setFormData] = useState({
-    sectoralResearchCategory: "",
-    studyTitle: "",
-    studyObjective: "",
-    researchMethology: "",
+    name: "",
+    licence: "",
+    designation: "",
+    department: "",
+    teamId: "",
+    contact: "",
+    email: "",
+    address: "",
+    isActive: true,
   });
 
-  function getCapabilityById(memberId) {
+  function getDoctorById(doctorId) {
     axiosInstance
-      .get(`api/sectoral-and-research/${memberId}`)
+      .get(`api/doctors/${doctorId}`)
       .then((response) => {
         console.log("response", response);
-        setFormData({ ...response.data.sectoralResearch });
+        setFormData({ ...response.data.doctor });
         console.log("formData", formData);
       })
       .catch((err) => {
-        console.log("Error!");
+        console.log("Error getting doctor by id!");
       });
   }
 
-  function createSectoralResearch() {
+  function getAllDoctorTeams() {
+    axiosInstance
+      .get("api/doctor-teams")
+      .then((response) => {
+        setDoctorTeams(response.data.teams);
+      })
+      .catch((err) => {
+        console.error("Error getting all doctor teams!");
+      });
+  }
+
+  function createDoctor() {
+    const payloadFormData = {
+      name: formData.name,
+      licence: formData.licence,
+      designation: formData.designation,
+      department: formData.department,
+      teamId: formData.teamId,
+      contact: formData.contact,
+      email: formData.email,
+      address: formData.address,
+      isActive: formData.isActive,
+    };
+
     try {
       axiosInstance
-        .post("api/sectoral-and-research", formData)
+        .post("api/doctors", payloadFormData, {
+          headers: {
+            Accept: "*/*",
+            "Content-Type": "application/json",
+          },
+        })
         .then((response) => {
-          history.push("/capability/all-sectoral-research");
+          history.push("/doctors/all-doctors");
         })
         .catch((err) => {
-          console.log("Error!");
-          setFormError(err.response.data.message);
+          console.log("Error creating doctor!");
+          setFormError(err.response?.data?.message || "Error creating doctor!");
         });
     } catch (error) {
       console.log("Something went wrong!");
+      setFormError("Something went wrong!");
     }
   }
 
-  function updateSectoralResearch(memberId) {
+  function updateDoctor(doctorId) {
+    const payloadFormData = {
+      name: formData.name,
+      licence: formData.licence,
+      designation: formData.designation,
+      department: formData.department,
+      teamId: formData.teamId,
+      contact: formData.contact,
+      email: formData.email,
+      address: formData.address,
+      isActive: formData.isActive,
+    };
+
     try {
       axiosInstance
-        .patch(`api/sectoral-and-research/${memberId}`, formData)
+        .patch(`api/doctors/${doctorId}`, payloadFormData, {
+          headers: {
+            Accept: "*/*",
+            "Content-Type": "application/json",
+          },
+        })
         .then((response) => {
-          setFormSuccess("Sectoral and Research has been updated!");
+          setFormSuccess("Doctor has been updated!");
         })
         .catch((err) => {
-          console.log("Error!");
-          setFormError(err.response.data.message);
+          console.log("Error updating doctor!");
+          setFormError(err.response?.data?.message || "Error updating doctor!");
         });
     } catch (error) {
       setFormError("Something went wrong!");
@@ -83,39 +137,41 @@ export const CreateDoctorForm = () => {
   const handleSubmit = (event) => {
     event.preventDefault();
     event.stopPropagation();
+    const form = event.currentTarget;
+
+    if (form.checkValidity() === false) {
+      event.preventDefault();
+      event.stopPropagation();
+    }
+
+    setValidated(true);
 
     if (id) {
-      updateSectoralResearch(id);
+      updateDoctor(id);
     } else {
-      createSectoralResearch();
+      createDoctor();
     }
   };
 
   const handleChange = (e) => {
-    const { name, value } = e.target;
+    const { name, value, type, checked } = e.target;
     setFormData((prevState) => ({
       ...prevState,
-      [name]: value,
+      [name]: type === "checkbox" ? checked : value,
     }));
   };
 
-  const handleEditorChange = (content, editor, name) => {
-    setFormData({
-      ...formData,
-      [name]: content,
-    });
-  };
-
   useEffect(() => {
+    getAllDoctorTeams();
     if (id) {
-      getCapabilityById(id);
+      getDoctorById(id);
     }
   }, []);
 
   return (
     <Card border="light" className="bg-white shadow-sm mb-4">
       <Card.Body>
-        <h5 className="mb-4">Add new Sectoral and Research</h5>
+        <h5 className="mb-4">{id ? "Edit Doctor" : "Add new Doctor"}</h5>
 
         {formError && <Alert variant="danger">{formError}</Alert>}
 
@@ -123,132 +179,172 @@ export const CreateDoctorForm = () => {
 
         <Form noValidate validated={validated} onSubmit={handleSubmit}>
           <Row>
-            <Form.Group id="sectoralResearchCategory" className="mb-3">
-              <Form.Label>Sectoral and Reserach Category</Form.Label>
-              <Form.Select
-                required
-                name="sectoralResearchCategory"
-                value={formData.sectoralResearchCategory}
-                onChange={handleChange}
-              >
-                <option defaultValue>
-                  Select sectoral and research category
-                </option>
-                <option>Health and Nutrition</option>
-                <option>Education</option>
-                <option>Governance, Proverty and Gender Issues</option>
-                <option>Trade and Industry</option>
-              </Form.Select>
-            </Form.Group>
-          </Row>
-          {/* Study Title */}
-          <Row>
-            <Col className="mb-3">
-              <Form.Group id="studyTitle">
-                <Form.Label>Study Title</Form.Label>
-                <div className={!isTitleEditorValid && "invalid-editor"}>
-                  <Editor
-                    value={formData.studyTitle}
-                    apiKey="q6tut9ishckw8kfsto8fek4zkak8ttiiu06x5wgev1rl0uzl"
-                    onInit={(evt, editor) => (editorRef.current = editor)}
-                    init={{
-                      height: 300,
-                      menubar: false,
-                      plugins: [
-                        "advlist autolink lists link image charmap print preview anchor",
-                        "searchreplace visualblocks code fullscreen",
-                        "insertdatetime media table paste code help wordcount",
-                      ],
-                      toolbar:
-                        "undo redo | formatselect | " +
-                        "bold italic backcolor | alignleft aligncenter " +
-                        "alignright alignjustify | bullist numlist outdent indent | " +
-                        "removeformat | help",
-                      content_style:
-                        "body { font-family:Helvetica,Arial,sans-serif; font-size:14px }",
-                    }}
-                    onEditorChange={(content, editor) =>
-                      handleEditorChange(content, editor, "studyTitle")
-                    }
-                  />
-                </div>
+            {/* Name */}
+            <Col md={6} className="mb-3">
+              <Form.Group id="name">
+                <Form.Label>Name</Form.Label>
+                <Form.Control
+                  required
+                  type="text"
+                  name="name"
+                  placeholder="Doctor's Name"
+                  value={formData.name}
+                  onChange={handleChange}
+                />
+              </Form.Group>
+            </Col>
+            {/* Licence */}
+            <Col md={6} className="mb-3">
+              <Form.Group id="licence">
+                <Form.Label>Licence Number</Form.Label>
+                <Form.Control
+                  required
+                  type="text"
+                  name="licence"
+                  placeholder="e.g., MD789022"
+                  value={formData.licence}
+                  onChange={handleChange}
+                />
               </Form.Group>
             </Col>
           </Row>
 
-          {/* Study Objective */}
           <Row>
-            <Col className="mb-3">
-              <Form.Group id="studyObjective">
-                <Form.Label>Study Objective</Form.Label>
-                <div className={!isObjectiveEditorValid && "invalid-editor"}>
-                  <Editor
-                    value={formData.studyObjective}
-                    apiKey="q6tut9ishckw8kfsto8fek4zkak8ttiiu06x5wgev1rl0uzl"
-                    onInit={(evt, editor) => (editorRef.current = editor)}
-                    init={{
-                      height: 300,
-                      menubar: false,
-                      plugins: [
-                        "advlist autolink lists link image charmap print preview anchor",
-                        "searchreplace visualblocks code fullscreen",
-                        "insertdatetime media table paste code help wordcount",
-                      ],
-                      toolbar:
-                        "undo redo | formatselect | " +
-                        "bold italic backcolor | alignleft aligncenter " +
-                        "alignright alignjustify | bullist numlist outdent indent | " +
-                        "removeformat | help",
-                      content_style:
-                        "body { font-family:Helvetica,Arial,sans-serif; font-size:14px }",
-                    }}
-                    onEditorChange={(content, editor) =>
-                      handleEditorChange(content, editor, "studyObjective")
-                    }
-                  />
-                </div>
+            {/* Designation */}
+            <Col md={6} className="mb-3">
+              <Form.Group id="designation">
+                <Form.Label>Designation</Form.Label>
+                <Form.Select
+                  required
+                  name="designation"
+                  value={formData.designation}
+                  onChange={handleChange}
+                >
+                  <option value="" disabled>
+                    Select designation
+                  </option>
+                  <option value="Junior Consultant">Junior Consultant</option>
+                  <option value="Senior Consultant">Senior Consultant</option>
+                  <option value="Specialist">Specialist</option>
+                  <option value="Resident">Resident</option>
+                  <option value="Intern">Intern</option>
+                </Form.Select>
+              </Form.Group>
+            </Col>
+            {/* Department */}
+            <Col md={6} className="mb-3">
+              <Form.Group id="department">
+                <Form.Label>Department</Form.Label>
+                <Form.Select
+                  required
+                  name="department"
+                  value={formData.department}
+                  onChange={handleChange}
+                >
+                  <option value="" disabled>
+                    Select department
+                  </option>
+                  <option value="Medicine">Medicine</option>
+                  <option value="Surgery">Surgery</option>
+                  <option value="Cardiology">Cardiology</option>
+                  <option value="Neurology">Neurology</option>
+                  <option value="Pediatrics">Pediatrics</option>
+                  <option value="Emergency">Emergency</option>
+                  <option value="ICU">ICU</option>
+                  <option value="Radiology">Radiology</option>
+                  <option value="Pathology">Pathology</option>
+                </Form.Select>
               </Form.Group>
             </Col>
           </Row>
 
-          {/* Research Methodology */}
+          <Row>
+            {/* Contact */}
+            <Col md={6} className="mb-3">
+              <Form.Group id="contact">
+                <Form.Label>Contact Number</Form.Label>
+                <Form.Control
+                  required
+                  type="text"
+                  name="contact"
+                  placeholder="e.g., +1987654331"
+                  value={formData.contact}
+                  onChange={handleChange}
+                />
+              </Form.Group>
+            </Col>
+            {/* Email */}
+            <Col md={6} className="mb-3">
+              <Form.Group id="email">
+                <Form.Label>Email</Form.Label>
+                <Form.Control
+                  required
+                  type="email"
+                  name="email"
+                  placeholder="e.g., doctor@hospital.com"
+                  value={formData.email}
+                  onChange={handleChange}
+                />
+              </Form.Group>
+            </Col>
+          </Row>
+
+          {/* Team Assignment */}
+          <Row>
+            <Col md={6} className="mb-3">
+              <Form.Group id="teamId">
+                <Form.Label>Assigned Team</Form.Label>
+                <Form.Select
+                  name="teamId"
+                  value={formData.teamId}
+                  onChange={handleChange}
+                >
+                  <option value="" disabled>
+                    Select team (optional)
+                  </option>
+                  {doctorTeams.map((team) => (
+                    <option key={team._id} value={team._id}>
+                      {team.name} - {team.department}
+                    </option>
+                  ))}
+                </Form.Select>
+              </Form.Group>
+            </Col>
+            {/* Active Status */}
+            <Col md={6} className="mb-3">
+              <Form.Group id="isActive">
+                <Form.Label>Status</Form.Label>
+                <Form.Check
+                  type="switch"
+                  name="isActive"
+                  checked={formData.isActive}
+                  onChange={handleChange}
+                  label={formData.isActive ? "Active" : "Inactive"}
+                />
+              </Form.Group>
+            </Col>
+          </Row>
+
+          {/* Address */}
           <Row>
             <Col className="mb-3">
-              <Form.Group id="researchMethology">
-                <Form.Label>Research Methodology</Form.Label>
-                <div className={!isResearchMethologyValid && "invalid-editor"}>
-                  <Editor
-                    value={formData.researchMethology}
-                    apiKey="q6tut9ishckw8kfsto8fek4zkak8ttiiu06x5wgev1rl0uzl"
-                    onInit={(evt, editor) => (editorRef.current = editor)}
-                    init={{
-                      height: 300,
-                      menubar: false,
-                      plugins: [
-                        "advlist autolink lists link image charmap print preview anchor",
-                        "searchreplace visualblocks code fullscreen",
-                        "insertdatetime media table paste code help wordcount",
-                      ],
-                      toolbar:
-                        "undo redo | formatselect | " +
-                        "bold italic backcolor | alignleft aligncenter " +
-                        "alignright alignjustify | bullist numlist outdent indent | " +
-                        "removeformat | help",
-                      content_style:
-                        "body { font-family:Helvetica,Arial,sans-serif; font-size:14px }",
-                    }}
-                    onEditorChange={(content, editor) =>
-                      handleEditorChange(content, editor, "researchMethology")
-                    }
-                  />
-                </div>
+              <Form.Group id="address">
+                <Form.Label>Address</Form.Label>
+                <Form.Control
+                  as="textarea"
+                  rows={3}
+                  name="address"
+                  placeholder="Enter full address"
+                  value={formData.address}
+                  onChange={handleChange}
+                />
               </Form.Group>
             </Col>
           </Row>
 
           <div className="mt-3">
             <Button variant="primary" type="submit">
-              Save All
+              {id ? "Update Doctor" : "Save Doctor"}
             </Button>
           </div>
         </Form>
