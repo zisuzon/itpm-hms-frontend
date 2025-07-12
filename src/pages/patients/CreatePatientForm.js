@@ -1,128 +1,133 @@
-
 import React, { useState, useEffect, useRef } from "react";
-import { useHistory, useParams } from 'react-router-dom';
-import { Editor } from '@tinymce/tinymce-react';
-import { Col, Row, Card, Form, Button, Alert, Image } from '@themesberg/react-bootstrap';
-import axiosInstance from '../../axios'
-import PlaceholderPP from '../../assets/img/pp-placeholder.jpeg'
-import {BE_IMAGE_PATH} from '../../utils/constants'
+import { useHistory, useParams } from "react-router-dom";
+import { Editor } from "@tinymce/tinymce-react";
+import {
+  Col,
+  Row,
+  Card,
+  Form,
+  Button,
+  Alert,
+  Image,
+} from "@themesberg/react-bootstrap";
+import axiosInstance from "../../axios";
+import PlaceholderPP from "../../assets/img/pp-placeholder.jpeg";
+import { BE_IMAGE_PATH } from "../../utils/constants";
 
-export const CreateTeamMemberForm = () => {
+export const CreatePatientForm = () => {
   const { id } = useParams();
   const history = useHistory();
 
   const editorRef = useRef(null);
   const [validated, setValidated] = useState(false);
   const [isDescriptionValid, setIsDescriptionValid] = useState(true);
-  const [formError, setFormError] = useState('');
-  const [formSuccess, setFormSuccess] = useState('');
+  const [formError, setFormError] = useState("");
+  const [formSuccess, setFormSuccess] = useState("");
   const [formData, setFormData] = useState({
-    name: '',
-    shortDescription: '',
-    description: '',
-    sortId: '',
-    image: '',
-    address: '',
-    email: '',
-    phone: '',
-    designation: '',
+    name: "",
+    shortDescription: "",
+    description: "",
+    sortId: "",
+    image: "",
+    address: "",
+    email: "",
+    phone: "",
+    designation: "",
   });
   // Image upload
   const filePickerRef = useRef();
   const [file, setFile] = useState();
   const [previewUrl, setPreviewUrl] = useState();
-  const maximumSize = 2 * 1024 * 1024 // 2MB
+  const maximumSize = 2 * 1024 * 1024; // 2MB
 
-  function getTeamMemberById(memberId) {
+  function getPatientById(patientId) {
     axiosInstance
-    .get(`api/team-members/${memberId}`)
-    .then((response) => {
-      console.log('response', response)
-      setFormData({...response.data.member})
-      console.log('formData', formData)
-    })
-    .catch((err) => {
-      console.log('Error!')
-    })
+      .get(`api/patients/${patientId}`)
+      .then((response) => {
+        console.log("response", response);
+        setFormData({ ...response.data.patient });
+        console.log("formData", formData);
+      })
+      .catch((err) => {
+        console.log("Error!");
+      });
   }
 
-  function createMember() {
-    if(!formData.image) {
-      setFormError('Member image missing!')
-      return
+  function createPatient() {
+    if (!formData.image) {
+      setFormError("Patient image missing!");
+      return;
     }
 
-    const payloadFormData = new FormData()
-    payloadFormData.append('name', formData.name)
-    payloadFormData.append('shortDescription', formData.shortDescription)
-    payloadFormData.append('description', formData.description)
-    payloadFormData.append('sortId', formData.sortId)
-    payloadFormData.append('image', formData.image)
-    payloadFormData.append('email', formData.email)
-    payloadFormData.append('phone', formData.phone)
-    payloadFormData.append('designation', formData.designation)
+    const payloadFormData = new FormData();
+    payloadFormData.append("name", formData.name);
+    payloadFormData.append("shortDescription", formData.shortDescription);
+    payloadFormData.append("description", formData.description);
+    payloadFormData.append("sortId", formData.sortId);
+    payloadFormData.append("image", formData.image);
+    payloadFormData.append("email", formData.email);
+    payloadFormData.append("phone", formData.phone);
+    payloadFormData.append("designation", formData.designation);
 
     try {
       axiosInstance
-      .post("api/team-members", payloadFormData, {
-        headers: {
-          'Accept': '*/*',
-          'Content-Type': 'multipart/form-data'
-        }
-      })
-      .then((response) => {
-        history.push('/team-members/all-team-members')
-      })
-      .catch((err) => {
-        console.log('Error!')
-        setFormError(err.response.data.message)
-      })
-      
+        .post("api/patients", payloadFormData, {
+          headers: {
+            Accept: "*/*",
+            "Content-Type": "multipart/form-data",
+          },
+        })
+        .then((response) => {
+          history.push("/patients/all-patients");
+        })
+        .catch((err) => {
+          console.log("Error!");
+          setFormError(err.response.data.message);
+        });
     } catch (error) {
-      console.log('Something went wrong!')
+      console.log("Something went wrong!");
     }
   }
 
-  function updateMember(memberId) {
-    if(!formData.image) {
-      setFormError('Member image missing!')
-      return
+  function updatePatient(patientId) {
+    if (!formData.image) {
+      setFormError("Patient image missing!");
+      return;
     }
 
-    const payloadFormData = new FormData()
-    payloadFormData.append('name', formData.name)
-    payloadFormData.append('shortDescription', formData.shortDescription)
-    payloadFormData.append('description', formData.description)
-    payloadFormData.append('sortId', formData.sortId)
-    payloadFormData.append('image', formData.image)
-    payloadFormData.append('email', formData.email)
-    payloadFormData.append('phone', formData.phone)
-    payloadFormData.append('designation', formData.designation)
+    const payloadFormData = new FormData();
+    payloadFormData.append("name", formData.name);
+    payloadFormData.append("shortDescription", formData.shortDescription);
+    payloadFormData.append("description", formData.description);
+    payloadFormData.append("sortId", formData.sortId);
+    payloadFormData.append("image", formData.image);
+    payloadFormData.append("email", formData.email);
+    payloadFormData.append("phone", formData.phone);
+    payloadFormData.append("designation", formData.designation);
 
     try {
       axiosInstance
-      .patch(`api/team-members/${memberId}`, payloadFormData, {
-        headers: {
-          'Accept': '*/*',
-          'Content-Type': 'multipart/form-data'
-        }
-      })
-      .then((response) => {
-        setFormSuccess('Member has been updated!')
-      })
-      .catch((err) => {
-        console.log('Error!')
-        setFormError(err.response.data.message)
-      })
-      
+        .patch(`api/patients/${patientId}`, payloadFormData, {
+          headers: {
+            Accept: "*/*",
+            "Content-Type": "application/json",
+          },
+        })
+        .then((response) => {
+          setFormSuccess("Patient has been updated!");
+        })
+        .catch((err) => {
+          console.log("Error!");
+          setFormError(err.response.data.message);
+        });
     } catch (error) {
-      setFormError('Something went wrong!')
+      setFormError("Something went wrong!");
     }
   }
 
   useEffect(() => {
-    if(id) {
-      getTeamMemberById(id)
+    if (id) {
+      getPatientById(id);
     }
   }, []);
 
@@ -140,9 +145,9 @@ export const CreateTeamMemberForm = () => {
       [name]: content,
     });
   };
-  
+
   const handleSubmit = (event) => {
-    setIsDescriptionValid(true)
+    setIsDescriptionValid(true);
     event.preventDefault();
     event.stopPropagation();
     const form = event.currentTarget;
@@ -153,14 +158,14 @@ export const CreateTeamMemberForm = () => {
     }
 
     setValidated(true);
-    if(!formData.description) {
-      setIsDescriptionValid(false)
+    if (!formData.description) {
+      setIsDescriptionValid(false);
     }
 
-    if(id) {
-      updateMember(id)
+    if (id) {
+      updatePatient(id);
     } else {
-      createMember()
+      createPatient();
     }
   };
 
@@ -175,26 +180,26 @@ export const CreateTeamMemberForm = () => {
     }
     const fileReader = new FileReader();
     fileReader.onload = () => {
-      console.log(fileReader.result)
+      console.log(fileReader.result);
       setPreviewUrl(fileReader.result);
     };
-    
+
     fileReader.readAsDataURL(file);
   }, [file]);
 
-  const pickedHandler = event => {
+  const pickedHandler = (event) => {
     if (!event.target.files || event.target.files.length > 1) {
-      setFormError('Something went wrong with your upload!')
-      return
+      setFormError("Something went wrong with your upload!");
+      return;
     }
 
     const pickedFile = event.target.files[0];
 
-    if(pickedFile.size >= maximumSize) {
-      setFormError('Image size must not exceed 2MB!')
-      return
+    if (pickedFile.size >= maximumSize) {
+      setFormError("Image size must not exceed 2MB!");
+      return;
     }
-    
+
     setFile(pickedFile);
     setFormData({
       ...formData,
@@ -203,56 +208,50 @@ export const CreateTeamMemberForm = () => {
   };
 
   function getImage() {
-    if(previewUrl) {
-      return previewUrl
+    if (previewUrl) {
+      return previewUrl;
     }
 
-    if(formData?.image) {
-      return `${BE_IMAGE_PATH}/${formData?.image}`
+    if (formData?.image) {
+      return `${BE_IMAGE_PATH}/${formData?.image}`;
     }
 
-    return PlaceholderPP
+    return PlaceholderPP;
   }
-
 
   return (
     <Card border="light" className="bg-white shadow-sm mb-4">
       <Card.Body>
-        <h5 className="mb-4">Add new team member</h5>
-        
-        {formError && (
-          <Alert variant='danger'>
-            {formError}
-          </Alert>
-        )}
+        <h5 className="mb-4">Add new Patient</h5>
 
-        {formSuccess && (
-          <Alert variant='success'>
-            {formSuccess}
-          </Alert>
-        )}
+        {formError && <Alert variant="danger">{formError}</Alert>}
+
+        {formSuccess && <Alert variant="success">{formSuccess}</Alert>}
 
         <Row>
           <Col md={4} className="mb-3">
-            <Card style={{ width: '12rem', height: '12rem' }}>
-              <Card.Img style={{ width: '12rem', height: '12rem' }} variant="top" src={getImage()} />
+            <Card style={{ width: "12rem", height: "12rem" }}>
+              <Card.Img
+                style={{ width: "12rem", height: "12rem" }}
+                variant="top"
+                src={getImage()}
+              />
             </Card>
           </Col>
           <Col md={6} className="mt-3">
-            <Button variant="outline-primary" onClick={pickImageHandler}>Pick Photo</Button>
+            <Button variant="outline-primary" onClick={pickImageHandler}>
+              Pick Photo
+            </Button>
           </Col>
         </Row>
-        
-        <Form 
-          noValidate
-          validated={validated}
-          onSubmit={handleSubmit}>
+
+        <Form noValidate validated={validated} onSubmit={handleSubmit}>
           <Row>
             {/* Image upload input form */}
             <input
-              id='image'
+              id="image"
               ref={filePickerRef}
-              style={{ display: 'none' }}
+              style={{ display: "none" }}
               type="file"
               accept=".jpg,.png,.jpeg"
               onChange={pickedHandler}
@@ -316,9 +315,7 @@ export const CreateTeamMemberForm = () => {
             </Col>
           </Row>
 
-          <Row>
-            
-          </Row>
+          <Row></Row>
 
           <Row className="align-items-center">
             {/* Phone */}
@@ -370,26 +367,30 @@ export const CreateTeamMemberForm = () => {
             <Col sm={9} className="mb-3">
               <Form.Group id="description">
                 <Form.Label>Description</Form.Label>
-                <div className={!isDescriptionValid ? 'invalid-editor' : ''}>
+                <div className={!isDescriptionValid ? "invalid-editor" : ""}>
                   <Editor
-                  value={formData.description}
-                    apiKey='q6tut9ishckw8kfsto8fek4zkak8ttiiu06x5wgev1rl0uzl'
-                    onInit={(evt, editor) => editorRef.current = editor}
+                    value={formData.description}
+                    apiKey="q6tut9ishckw8kfsto8fek4zkak8ttiiu06x5wgev1rl0uzl"
+                    onInit={(evt, editor) => (editorRef.current = editor)}
                     init={{
                       height: 300,
                       menubar: false,
                       plugins: [
-                        'advlist autolink lists link image charmap print preview anchor',
-                        'searchreplace visualblocks code fullscreen',
-                        'insertdatetime media table paste code help wordcount'
+                        "advlist autolink lists link image charmap print preview anchor",
+                        "searchreplace visualblocks code fullscreen",
+                        "insertdatetime media table paste code help wordcount",
                       ],
-                      toolbar: 'undo redo | formatselect | ' +
-                      'bold italic backcolor | alignleft aligncenter ' +
-                      'alignright alignjustify | bullist numlist outdent indent | ' +
-                      'removeformat | help',
-                      content_style: 'body { font-family:Helvetica,Arial,sans-serif; font-size:14px }'
+                      toolbar:
+                        "undo redo | formatselect | " +
+                        "bold italic backcolor | alignleft aligncenter " +
+                        "alignright alignjustify | bullist numlist outdent indent | " +
+                        "removeformat | help",
+                      content_style:
+                        "body { font-family:Helvetica,Arial,sans-serif; font-size:14px }",
                     }}
-                    onEditorChange={(content, editor) => handleEditorChange(content, editor, 'description')}
+                    onEditorChange={(content, editor) =>
+                      handleEditorChange(content, editor, "description")
+                    }
                   />
                 </div>
               </Form.Group>
@@ -397,7 +398,9 @@ export const CreateTeamMemberForm = () => {
           </Row>
 
           <div className="mt-3">
-            <Button variant="primary" type="submit">Save All</Button>
+            <Button variant="primary" type="submit">
+              Save All
+            </Button>
           </div>
         </Form>
       </Card.Body>

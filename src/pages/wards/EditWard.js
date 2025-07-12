@@ -1,15 +1,15 @@
 import React, { useEffect } from "react";
-import { useHistory, useParams } from 'react-router-dom';
-import { Col, Row } from '@themesberg/react-bootstrap';
-import { CreateTeamMemberForm } from "./CreateTeamMemberForm";
+import { useHistory, useParams } from "react-router-dom";
+import { Col, Row } from "@themesberg/react-bootstrap";
+import { CreateWardForm } from "./CreateWardForm";
 
 export default () => {
   const { id } = useParams();
   const history = useHistory();
 
   useEffect(() => {
-    if(!id) {
-      history.push('/team-members/all-team-members')
+    if (!id) {
+      history.push("/wards/all-wards");
     }
   }, [id, history]);
 
@@ -17,7 +17,7 @@ export default () => {
     <>
       <Row>
         <Col xs={12} xl={12}>
-          <CreateTeamMemberForm />
+          <CreateWardForm />
         </Col>
       </Row>
     </>

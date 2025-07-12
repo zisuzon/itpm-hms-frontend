@@ -1,13 +1,13 @@
 import React from "react";
-import { Col, Row } from '@themesberg/react-bootstrap';
-import { CreateSectoralResearchForm } from "./CreateSectoralResearchForm";
+import { Col, Row } from "@themesberg/react-bootstrap";
+import { CreateDoctorForm } from "./CreateDoctorForm";
 
 export default () => {
   return (
     <>
       <Row>
         <Col xs={12} xl={12}>
-          <CreateSectoralResearchForm />
+          <CreateDoctorForm />
         </Col>
 
         {/* <Col xs={12} xl={4}>

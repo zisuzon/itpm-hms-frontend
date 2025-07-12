@@ -1,10 +1,16 @@
-
 import React, { useState } from "react";
-import { useHistory } from 'react-router-dom';
+import { useHistory } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEnvelope, faUnlockAlt } from "@fortawesome/free-solid-svg-icons";
-import { Col, Row, Form, Button, Container, InputGroup } from '@themesberg/react-bootstrap';
-import axiosInstance from '../axios'
+import {
+  Col,
+  Row,
+  Form,
+  Button,
+  Container,
+  InputGroup,
+} from "@themesberg/react-bootstrap";
+import axiosInstance from "../axios";
 // import { AuthContext } from '../shared/context/auth-context';
 // import { Routes } from "../routes";
 import BgImage from "../assets/img/illustrations/signin.svg";
@@ -15,8 +21,8 @@ export default () => {
   // const auth = useContexts(AuthContext);
 
   const [formData, setFormData] = useState({
-    email: '',
-    password: '',
+    email: "",
+    password: "",
   });
 
   const handleChange = (e) => {
@@ -38,45 +44,30 @@ export default () => {
 
     setValidated(true);
 
-    // try {
-    //   const responseData = await axiosInstance
-    //   .post("api/users/login", formData)
-    //   .then(async (response) => {
-    //     const loginDataJSON = JSON.stringify(response.data);
-
-    //     await localStorage.setItem('userData', loginDataJSON);
-
-    //     history.push('/')
-    //   })
-    //   .catch((err) => {
-    //     console.log('Login API error!')
-    //   })
-      
-    // } catch (error) {
-    //   console.log('Something went wrong!')
-    // }
     try {
       await axiosInstance
         .post("api/users/login", formData)
         .then(async (response) => {
           const loginDataJSON = JSON.stringify(response.data);
-          
+
           // Set userData in localStorage
-          await localStorage.setItem('userData', loginDataJSON);
-    
+          await localStorage.setItem("userData", loginDataJSON);
+
           // Access userData only after it has been successfully set
           const userData = JSON.parse(loginDataJSON);
-    
+
           // Update axiosInstance headers with the new token
-          axiosInstance.defaults.headers.common['Authorization'] = `Bearer ${userData.token}`;
-          
-          history.push('/');
+          axiosInstance.defaults.headers.common[
+            "Authorization"
+          ] = `Bearer ${userData.token}`;
+
+          history.push("/");
         })
         .catch((err) => {
-          console.log('Login API error!')
+          console.log("Login API error!");
         });
     } catch (error) {
-      console.log('Something went wrong!')
+      console.log("Something went wrong!");
     }
   };
 
@@ -84,15 +75,24 @@ export default () => {
     <main>
       <section className="d-flex align-items-center my-5 mt-lg-6 mb-lg-5">
         <Container>
-          <Row className="justify-content-center form-bg-image" style={{ backgroundImage: `url(${BgImage})` }}>
-            <Col xs={12} className="d-flex align-items-center justify-content-center">
+          <Row
+            className="justify-content-center form-bg-image"
+            style={{ backgroundImage: `url(${BgImage})` }}
+          >
+            <Col
+              xs={12}
+              className="d-flex align-items-center justify-content-center"
+            >
               <div className="bg-white shadow-soft border rounded border-light p-4 p-lg-5 w-100 fmxw-500">
                 <div className="text-center text-md-center mb-4 mt-md-0">
-                  <h3 className="mb-0">Admin Login!</h3>
+                  <h3 className="mb-0">Hospital Management System</h3>
+                  <hr />
+                  <h5 className="mb-0">Admin Login!</h5>
                 </div>
 
                 {/* Form Start */}
-                <Form className="mt-4"
+                <Form
+                  className="mt-4"
                   noValidate
                   validated={validated}
                   onSubmit={handleSubmit}
