@@ -11,12 +11,14 @@ import {
   InputGroup,
 } from "@themesberg/react-bootstrap";
 import axiosInstance from "../axios";
+import { useToast } from "../shared/context/toast-context";
 // import { AuthContext } from '../shared/context/auth-context';
 // import { Routes } from "../routes";
 import BgImage from "../assets/img/illustrations/signin.svg";
 
 export default () => {
   const history = useHistory();
+  const { error } = useToast();
   const [validated, setValidated] = useState(false);
   // const auth = useContexts(AuthContext);
 
@@ -64,10 +66,17 @@ export default () => {
           history.push("/");
         })
         .catch((err) => {
-          console.log("Login API error!");
+          console.log("Login API error!", err.response.data);
+          // Show error toast with response data
+          const errorMessage =
+            err.response?.data?.message ||
+            err.response?.data?.error ||
+            "Login failed. Please check your credentials.";
+          error(errorMessage);
         });
     } catch (error) {
       console.log("Something went wrong!");
+      error("Something went wrong! Please try again.");
     }
   };
 

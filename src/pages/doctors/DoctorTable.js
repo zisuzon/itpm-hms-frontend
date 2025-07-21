@@ -18,12 +18,14 @@ import { Routes } from "../../routes";
 import ConfirmationModal from "../components/ConfirmModal";
 import axiosInstance from "../../axios";
 import DOMPurify from "dompurify";
+import { useToast } from "../../shared/context/toast-context";
 
 // const sanitizeHTML = (html) => ({
 //   __html: DOMPurify.sanitize(html),
 // });
 
 export const DoctorTable = () => {
+  const { success, error } = useToast();
   const [showModal, setShowModal] = useState(false);
   const [tempDeleteDoctor, setTempDeleteDoctor] = useState({});
   const handleCloseModal = () => setShowModal(false);
@@ -68,6 +70,7 @@ export const DoctorTable = () => {
       })
       .catch((err) => {
         console.log("Error!");
+        error("Failed to load doctors");
       });
   }
 
@@ -82,10 +85,11 @@ export const DoctorTable = () => {
       .delete(`api/doctors/${tempDeleteDoctor.id}`)
       .then((response) => {
         getAllDoctors();
-        setDeleteSuccessMsg(response.data.message);
+        success("Doctor deleted successfully");
       })
       .catch((err) => {
         console.log("Error!");
+        error("Failed to delete doctor");
       });
   };
 
@@ -245,7 +249,7 @@ export const DoctorTable = () => {
         show={showModal}
         handleClose={handleCloseModal}
         handleConfirm={handleConfirmation}
-        message="Are you sure you want to delete the member?"
+        message="Are you sure you want to delete the doctor?"
       />
     </>
   );

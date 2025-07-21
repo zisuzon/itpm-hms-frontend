@@ -343,7 +343,7 @@ export const CreatePatientForm = () => {
                   </option>
                   {doctorTeams.map((team) => (
                     <option key={team._id} value={team._id}>
-                      {team?.name} - {team?.department}
+                      {team?.teamName} - {team?.department}
                     </option>
                   ))}
                 </Form.Select>

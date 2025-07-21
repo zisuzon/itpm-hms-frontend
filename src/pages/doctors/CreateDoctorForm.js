@@ -9,6 +9,7 @@ import {
   Alert,
 } from "@themesberg/react-bootstrap";
 import axiosInstance from "../../axios";
+import { useToast } from "../../shared/context/toast-context";
 
 // {
 //   "name": "Dr. Philip",
@@ -25,6 +26,7 @@ import axiosInstance from "../../axios";
 export const CreateDoctorForm = () => {
   const { id } = useParams();
   const history = useHistory();
+  const { success, error } = useToast();
 
   const [validated, setValidated] = useState(false);
   const [formError, setFormError] = useState("");
@@ -64,6 +66,7 @@ export const CreateDoctorForm = () => {
       })
       .catch((err) => {
         console.error("Error getting all doctor teams!");
+        error("Failed to load doctor teams");
       });
   }
 
@@ -89,15 +92,20 @@ export const CreateDoctorForm = () => {
           },
         })
         .then((response) => {
+          success("Doctor created successfully");
           history.push("/doctors/all-doctors");
         })
         .catch((err) => {
           console.log("Error creating doctor!");
-          setFormError(err.response?.data?.message || "Error creating doctor!");
+          const errorMessage =
+            err.response?.data?.message || "Error creating doctor!";
+          setFormError(errorMessage);
+          error(errorMessage);
         });
     } catch (error) {
       console.log("Something went wrong!");
       setFormError("Something went wrong!");
+      error("Something went wrong!");
     }
   }
 
@@ -124,13 +132,18 @@ export const CreateDoctorForm = () => {
         })
         .then((response) => {
           setFormSuccess("Doctor has been updated!");
+          success("Doctor updated successfully");
         })
         .catch((err) => {
           console.log("Error updating doctor!");
-          setFormError(err.response?.data?.message || "Error updating doctor!");
+          const errorMessage =
+            err.response?.data?.message || "Error updating doctor!";
+          setFormError(errorMessage);
+          error(errorMessage);
         });
     } catch (error) {
       setFormError("Something went wrong!");
+      error("Something went wrong!");
     }
   }
 

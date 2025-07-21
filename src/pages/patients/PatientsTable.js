@@ -23,9 +23,11 @@ export const PatientsTable = () => {
   const [patients, setPatients] = useState([]);
   const [tempDeleteMember, setTempDeleteMember] = useState({});
   const [deleteSuccessMsg, setDeleteSuccessMsg] = useState("");
-  const confirmModalText = `Are you sure you want to delete the member ${tempDeleteMember?.name}?`;
+  const confirmModalText = `Are you sure you want to discharge the patient ${tempDeleteMember?.name}?`;
   const [searchTerm, setSearchTerm] = useState("");
   const [searchResults, setSearchResults] = useState([]);
+  const [wards, setWards] = useState([]);
+  const [teams, setTeams] = useState([]);
 
   // General Search
   const handleSearch = (event) => {
@@ -38,9 +40,21 @@ export const PatientsTable = () => {
     }
 
     const filteredResults = patients.filter((item) => {
+      const searchLower = searchText.toLowerCase();
+
+      // Get ward name for search
+      const wardName = getWardDisplayName(item.assignedWard);
+
+      // Get team name for search
+      const teamName = getTeamDisplayName(item.assignedTeam);
+
       return (
-        item?.name.toLowerCase().includes(searchText.toLowerCase()) ||
-        item?.designation.toLowerCase().includes(searchText.toLowerCase())
+        item?.name?.toLowerCase().includes(searchLower) ||
+        item?.gender?.toLowerCase().includes(searchLower) ||
+        item?.contact?.toLowerCase().includes(searchLower) ||
+        item?.emergencyContact?.toLowerCase().includes(searchLower) ||
+        wardName.toLowerCase().includes(searchLower) ||
+        teamName.toLowerCase().includes(searchLower)
       );
     });
 
@@ -53,23 +67,75 @@ export const PatientsTable = () => {
     setShowModal(true);
   };
 
-  function getAllPatients() {
-    axiosInstance
-      .get("api/patients")
-      .then((response) => {
-        setPatients(response.data.patients.sort((a, b) => a.sortId - b.sortId));
-        setSearchResults(
-          response.data.patients.sort((a, b) => a.sortId - b.sortId)
-        );
-      })
-      .catch((err) => {
-        console.log("Error!");
-      });
-  }
+  const getAllPatients = async () => {
+    try {
+      const response = await axiosInstance.get("api/patients");
+      setPatients(response.data.patients);
+      setSearchResults(response.data.patients);
+    } catch (err) {
+      console.log("Error fetching patients:", err);
+    }
+  };
+
+  const getAllWards = async () => {
+    try {
+      const response = await axiosInstance.get("api/wards");
+      setWards(response.data.wards);
+    } catch (err) {
+      console.log("Error fetching wards:", err);
+    }
+  };
+
+  const getAllTeams = async () => {
+    try {
+      const response = await axiosInstance.get("api/doctor-teams");
+      setTeams(response.data.teams);
+    } catch (err) {
+      console.log("Error fetching teams:", err);
+    }
+  };
 
   useEffect(() => {
     getAllPatients();
+    getAllWards();
+    getAllTeams();
   }, []);
+
+  // Helper function to get ward display name
+  const getWardDisplayName = (ward) => {
+    if (!ward) return "Not Assigned";
+
+    // If ward is already populated (object with name)
+    if (typeof ward === "object" && ward.name) {
+      return ward.name;
+    }
+
+    // If ward is an ID, find the ward by ID
+    if (typeof ward === "string") {
+      const foundWard = wards.find((w) => w._id === ward);
+      return foundWard ? foundWard.name : "Unknown Ward";
+    }
+
+    return "Unknown Ward";
+  };
+
+  // Helper function to get team display name
+  const getTeamDisplayName = (team) => {
+    if (!team) return "Not Assigned";
+
+    // If team is already populated (object with teamName)
+    if (typeof team === "object" && team.teamName) {
+      return team.teamName;
+    }
+
+    // If team is an ID, find the team by ID
+    if (typeof team === "string") {
+      const foundTeam = teams.find((t) => t._id === team);
+      return foundTeam ? foundTeam.teamName : "Unknown Team";
+    }
+
+    return "Unknown Team";
+  };
 
   const handleConfirmation = () => {
     handleCloseModal(); // Close the modal after the action is confirmed.
@@ -97,18 +163,30 @@ export const PatientsTable = () => {
       _id,
     } = props;
 
+    console.log("assignedTeam", assignedTeam);
+    console.log("assignedWard", assignedWard);
+
     return (
       <tr>
         <td>
           <Card.Link href="#" className="text-primary fw-bold">
-            {_id ? `${_id.substring(0, 2)}...` : ""}
+            {_id ? `${_id.substring(0, 8)}...` : ""}
           </Card.Link>
         </td>
         <td className="fw-bold">{name}</td>
         <td>{gender}</td>
-        <td>{emergencyContact}</td>
-        <td>{assignedWard}</td>
-        <td>{assignedTeam}</td>
+        <td>{contact || "N/A"}</td>
+        <td>{emergencyContact || "N/A"}</td>
+        <td>
+          <span className="badge bg-info">
+            {getWardDisplayName(assignedWard)}
+          </span>
+        </td>
+        <td>
+          <span className="badge bg-secondary">
+            {getTeamDisplayName(assignedTeam)}
+          </span>
+        </td>
         <td>
           <Dropdown as={ButtonGroup} className="mb-2 me-2">
             <Dropdown.Toggle size="sm" split variant="info">
@@ -144,7 +222,7 @@ export const PatientsTable = () => {
             </InputGroup.Text>
             <Form.Control
               type="text"
-              placeholder="Search"
+              placeholder="Search patients, wards, teams..."
               value={searchTerm}
               onChange={handleSearch}
             />
@@ -176,9 +254,10 @@ export const PatientsTable = () => {
           >
             <thead className="thead-light">
               <tr>
-                <th className="border-0">#</th>
+                <th className="border-0">ID</th>
                 <th className="border-0">Name</th>
                 <th className="border-0">Gender</th>
+                <th className="border-0">Contact</th>
                 <th className="border-0">Emergency Contact</th>
                 <th className="border-0">Ward</th>
                 <th className="border-0">Doctor Team</th>

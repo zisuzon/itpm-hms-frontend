@@ -39,9 +39,11 @@ export const WardsTable = () => {
     }
 
     const filteredResults = wards.filter((item) => {
+      const searchLower = searchText.toLowerCase();
       return (
-        item?.name.toLowerCase().includes(searchText.toLowerCase()) ||
-        item?.wardType.toLowerCase().includes(searchText.toLowerCase())
+        item?.name?.toLowerCase().includes(searchLower) ||
+        item?.type?.toLowerCase().includes(searchLower) ||
+        item?.wardGender?.toLowerCase().includes(searchLower)
       );
     });
 
@@ -85,20 +87,60 @@ export const WardsTable = () => {
   };
 
   const TableRow = (props) => {
-    const { name, type, totalBeds, totalOccupiedBeds, wardGender, _id } = props;
+    const {
+      name,
+      type,
+      totalBeds,
+      totalOccupiedBeds,
+      availableBeds,
+      occupancyPercentage,
+      wardGender,
+      _id,
+    } = props;
+
+    // Helper function to get occupancy color
+    const getOccupancyColor = (percentage) => {
+      if (percentage >= 90) return "danger";
+      if (percentage >= 75) return "warning";
+      return "success";
+    };
 
     return (
       <tr>
         <td>
           <Card.Link href="#" className="text-primary fw-bold">
-            {_id ? `${_id.substring(0, 2)}...` : ""}
+            {_id ? `${_id.substring(0, 8)}...` : ""}
           </Card.Link>
         </td>
         <td className="fw-bold">{name}</td>
-        <td>{type}</td>
-        <td>{totalBeds}</td>
-        <td>{totalOccupiedBeds}</td>
-        <td>{wardGender}</td>
+        <td>
+          <span className="badge bg-secondary">{type}</span>
+        </td>
+        <td className="text-center">{totalBeds}</td>
+        <td className="text-center">
+          <span
+            className={`badge bg-${getOccupancyColor(occupancyPercentage)}`}
+          >
+            {totalOccupiedBeds} / {totalBeds}
+          </span>
+        </td>
+        <td className="text-center">
+          <span className="badge bg-info">{availableBeds} available</span>
+        </td>
+        <td>
+          <span className="badge bg-primary">
+            {occupancyPercentage}% occupied
+          </span>
+          {props.debug && (
+            <small className="d-block text-muted">
+              Debug: W{props.debug.wardArrayCount} P
+              {props.debug.patientModelCount}
+            </small>
+          )}
+        </td>
+        <td>
+          <span className="badge bg-secondary">{wardGender}</span>
+        </td>
         <td>
           <Dropdown as={ButtonGroup} className="mb-2 me-2">
             <Dropdown.Toggle size="sm" split variant="info">
@@ -134,7 +176,7 @@ export const WardsTable = () => {
             </InputGroup.Text>
             <Form.Control
               type="text"
-              placeholder="Search"
+              placeholder="Search wards, types, gender..."
               value={searchTerm}
               onChange={handleSearch}
             />
@@ -166,12 +208,14 @@ export const WardsTable = () => {
           >
             <thead className="thead-light">
               <tr>
-                <th className="border-0">#</th>
+                <th className="border-0">ID</th>
                 <th className="border-0">Ward Name</th>
-                <th className="border-0">Ward type</th>
+                <th className="border-0">Type</th>
                 <th className="border-0">Total Beds</th>
-                <th className="border-0">Occupied Beds</th>
-                <th className="border-0">Ward Gender</th>
+                <th className="border-0">Occupied</th>
+                <th className="border-0">Available</th>
+                <th className="border-0">Occupancy</th>
+                <th className="border-0">Gender</th>
                 <th className="border-0">Actions</th>
               </tr>
             </thead>

@@ -4,24 +4,12 @@ import { useLocation } from "react-router-dom";
 import { CSSTransition } from "react-transition-group";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
-  faBook,
-  faBoxOpen,
   faChartPie,
-  faUserNinja,
   faBed,
-  faCog,
-  faFileAlt,
-  faHandHoldingUsd,
-  faUserPlus,
   faHospital,
   faBriefcaseMedical,
   faSignOutAlt,
-  faTable,
   faTimes,
-  faCalendarAlt,
-  faMapPin,
-  faInbox,
-  faRocket,
 } from "@fortawesome/free-solid-svg-icons";
 import {
   Nav,
@@ -35,7 +23,6 @@ import {
 import { Link } from "react-router-dom";
 
 import { Routes } from "../routes";
-import ThemesbergLogo from "../assets/img/themesberg.svg";
 import ReactHero from "../assets/img/technologies/react-hero-logo.svg";
 import ProfilePicture from "../assets/img/team/profile-picture-3.jpg";
 
@@ -221,6 +208,14 @@ export default (props = {}) => {
               >
                 <NavItem title="All Doctors" link={Routes.AllDoctors.path} />
                 <NavItem title="New Doctor" link={Routes.CreateDoctor.path} />
+              </CollapsableNavItem>
+
+              {/* Doctors */}
+              <CollapsableNavItem
+                eventKey="doctor-teams/"
+                title="Doctor Teams"
+                icon={faBriefcaseMedical}
+              >
                 <NavItem
                   title="All Dr Teams"
                   link={Routes.AllDoctorTeams.path}
@@ -230,58 +225,7 @@ export default (props = {}) => {
                   link={Routes.CreateDoctorTeam.path}
                 />
               </CollapsableNavItem>
-
-              {/* <NavItem title="Settings" icon={faCog} link={Routes.Settings.path} /> */}
-
-              {/* TABLES */}
-              {/* <CollapsableNavItem eventKey="tables/" title="Tables" icon={faTable}>
-                <NavItem title="Bootstrap Table" link={Routes.BootstrapTables.path} />
-              </CollapsableNavItem> */}
-
-              {/* PAGES */}
-              {/* <CollapsableNavItem eventKey="examples/" title="Page Examples" icon={faFileAlt}>
-                <NavItem title="Sign In" link={Routes.Signin.path} />
-                <NavItem title="Sign Up" link={Routes.Signup.path} />
-                <NavItem title="Forgot password" link={Routes.ForgotPassword.path} />
-                <NavItem title="Reset password" link={Routes.ResetPassword.path} />
-                <NavItem title="Lock" link={Routes.Lock.path} />
-                <NavItem title="404 Not Found" link={Routes.NotFound.path} />
-                <NavItem title="500 Server Error" link={Routes.ServerError.path} />
-              </CollapsableNavItem> */}
-
               <Dropdown.Divider className="my-3 border-indigo" />
-
-              {/* DOCUMENTATIONS */}
-              {/* <CollapsableNavItem eventKey="documentation/" title="Getting Started" icon={faBook}>
-                <NavItem title="Overview" link={Routes.DocsOverview.path} />
-                <NavItem title="Download" link={Routes.DocsDownload.path} />
-                <NavItem title="Quick Start" link={Routes.DocsQuickStart.path} />
-                <NavItem title="License" link={Routes.DocsLicense.path} />
-                <NavItem title="Folder Structure" link={Routes.DocsFolderStructure.path} />
-                <NavItem title="Build Tools" link={Routes.DocsBuild.path} />
-                <NavItem title="Changelog" link={Routes.DocsChangelog.path} />
-              </CollapsableNavItem> */}
-
-              {/* COMPONENTS */}
-              {/* <CollapsableNavItem eventKey="components/" title="Components" icon={faBoxOpen}>
-                <NavItem title="Accordion" link={Routes.Accordions.path} />
-                <NavItem title="Alerts" link={Routes.Alerts.path} />
-                <NavItem title="Badges" link={Routes.Badges.path} />
-                <NavItem external title="Widgets" link="https://demo.themesberg.com/volt-pro-react/#/components/widgets" target="_blank" badgeText="Pro" />
-                <NavItem title="Breadcrumbs" link={Routes.Breadcrumbs.path} />
-                <NavItem title="Buttons" link={Routes.Buttons.path} />
-                <NavItem title="Forms" link={Routes.Forms.path} />
-                <NavItem title="Modals" link={Routes.Modals.path} />
-                <NavItem title="Navbars" link={Routes.Navbars.path} />
-                <NavItem title="Navs" link={Routes.Navs.path} />
-                <NavItem title="Pagination" link={Routes.Pagination.path} />
-                <NavItem title="Popovers" link={Routes.Popovers.path} />
-                <NavItem title="Progress" link={Routes.Progress.path} />
-                <NavItem title="Tables" link={Routes.Tables.path} />
-                <NavItem title="Tabs" link={Routes.Tabs.path} />
-                <NavItem title="Toasts" link={Routes.Toasts.path} />
-                <NavItem title="Tooltips" link={Routes.Tooltips.path} />
-              </CollapsableNavItem> */}
             </Nav>
           </div>
         </SimpleBar>
