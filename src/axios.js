@@ -8,7 +8,8 @@ const getUserData = () => {
 
 // Create axios instance
 const axiosInstance = axios.create({
-  baseURL: "http://localhost:5000", // Your base URL here
+  // baseURL: "http://localhost:5000", // Your base URL here
+  baseURL: "https://backend-4k75.onrender.com/", // Your base URL here
   timeout: 20000, // Timeout in milliseconds
   headers: {
     "Content-Type": "application/json", // You can add default headers here
